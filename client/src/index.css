@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-green-primary: #0F4C3A;
+    --color-green-dark: #0A3629;
+    --color-green-light: #166D53;
+    --color-gold-primary: #F4B740;
+    --color-gold-hover: #E2A630;
+    --color-dark: #1F2937;
+    --color-light: #F5F7F5;
+    --color-card-bg: #FFFFFF;
+    
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1F2937;
+    background-color: #F5F7F5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: #F5F7F5;
+    color: #1F2937;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbar for Sleek Feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #E5E7EB;
+}
+::-webkit-scrollbar-thumb {
+  background: #0F4C3A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0A3629;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 76, 58, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 183, 64, 0.2);
+}
+
+/* Card hover animation */
+.property-card-shadow {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.property-card-shadow:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(15, 76, 58, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
