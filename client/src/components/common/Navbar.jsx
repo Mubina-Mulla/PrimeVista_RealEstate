@@ -14,6 +14,7 @@ export function Navbar() {
     { name: 'About Us', path: '/about' },
     { name: 'Services', path: '/services' },
     { name: 'Our Team', path: '/agents' },
+    { name: 'Testimonials', path: '/testimonials' },
     { name: 'Contact', path: '/contact' },
     { name: 'FAQ', path: '/faq' },
   ]

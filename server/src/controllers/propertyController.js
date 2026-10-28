@@ -144,7 +144,7 @@ export async function getPropertyBySlugOrId(req, res, next) {
 
     const property = await Property.findOne({
       $or: [{ slug: identifier }, { propertyId: identifier.toUpperCase() }],
-      status: { $ne: 'archived' },
+      status: { $in: ['published', 'sold', 'rented'] },
     }).populate('assignedAgent', 'name photo role phone email description experience')
 
     if (!property) {

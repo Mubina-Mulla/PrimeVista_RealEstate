@@ -16,9 +16,11 @@ export const createUserSchema = z.object({
   role: z.enum(['super_admin', 'admin', 'agent']).default('admin'),
 })
 
-// Generate JWT Helper
 function generateToken(user) {
-  const secret = process.env.JWT_SECRET || 'primevista_super_secure_jwt_secret_key_2026_luxury_real_estate'
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET must be configured in environment variables.')
+  }
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d'
 
   return jwt.sign(
@@ -97,7 +99,7 @@ export async function getCurrentUser(req, res, next) {
 export async function getAllUsers(req, res, next) {
   try {
     const users = await User.find().select('-passwordHash').sort({ createdAt: -1 })
-    return res.json({ success: true, users })
+    return res.json({ success: true, users, data: users })
   } catch (error) {
     next(error)
   }

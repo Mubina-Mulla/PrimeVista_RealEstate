@@ -1,20 +1,32 @@
-import React, { useState } from 'react'
-import { X, Calendar, Clock, Phone, Mail, Building2, User, Send, CheckCircle2 } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, Calendar, Clock, Phone, Mail, CheckCircle2 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
-import { formatDate, INQUIRY_STATUS_COLORS } from '../../utils/formatters.js'
+import { formatDate } from '../../utils/formatters.js'
 
 export function AdminInquiryModal({ isOpen, onClose, inquiry, onUpdated, agents = [] }) {
   const { showToast } = useToast()
-  if (!isOpen || !inquiry) return null
 
-  const [status, setStatus] = useState(inquiry.status || 'New')
-  const [assignedAgent, setAssignedAgent] = useState(inquiry.assignedAgent?._id || '')
+  const [status, setStatus] = useState(inquiry?.status || 'New')
+  const [assignedAgent, setAssignedAgent] = useState(inquiry?.assignedAgent?._id || '')
   const [followUpDate, setFollowUpDate] = useState(
-    inquiry.followUpDate ? new Date(inquiry.followUpDate).toISOString().split('T')[0] : ''
+    inquiry?.followUpDate ? new Date(inquiry.followUpDate).toISOString().split('T')[0] : ''
   )
   const [newNote, setNewNote] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (inquiry) {
+      setStatus(inquiry.status || 'New')
+      setAssignedAgent(inquiry.assignedAgent?._id || '')
+      setFollowUpDate(
+        inquiry.followUpDate ? new Date(inquiry.followUpDate).toISOString().split('T')[0] : ''
+      )
+      setNewNote('')
+    }
+  }, [inquiry])
+
+  if (!isOpen || !inquiry) return null
 
   const handleStatusChange = async (e) => {
     const newStat = e.target.value
@@ -45,6 +57,22 @@ export function AdminInquiryModal({ isOpen, onClose, inquiry, onUpdated, agents 
       }
     } catch (err) {
       showToast(err.message || 'Failed to assign agent', 'error')
+    }
+  }
+
+  const handleQuickVisitOutcome = async (outcomeStatus, note) => {
+    try {
+      const res = await api.patch(`/inquiries/${inquiry._id}/status`, {
+        status: outcomeStatus,
+        note,
+      })
+      if (res.success) {
+        setStatus(outcomeStatus)
+        showToast(`Inquiry status updated: ${outcomeStatus}`, 'success')
+        onUpdated()
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to update status', 'error')
     }
   }
 
@@ -169,23 +197,57 @@ export function AdminInquiryModal({ isOpen, onClose, inquiry, onUpdated, agents 
             </div>
           </div>
 
-          {/* Preferred Site Visit Slot if any */}
-          {inquiry.preferredDate && (
-            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 flex items-center justify-between">
+          {/* Site Visit Management & Slot */}
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Calendar size={18} className="text-amber-700" />
+                <Calendar size={18} className="text-amber-800" />
                 <div>
-                  <p className="font-bold text-amber-900">Requested Site Visit Slot</p>
-                  <p className="text-amber-700">
-                    {formatDate(inquiry.preferredDate)} • {inquiry.preferredTime || 'Flexible'}
+                  <p className="font-bold text-amber-950">Site Visit & Property Tour</p>
+                  <p className="text-xs text-amber-800">
+                    {inquiry.preferredDate
+                      ? `${formatDate(inquiry.preferredDate)} • Slot: ${inquiry.preferredTime || 'Flexible'}`
+                      : 'No specific date requested by customer'}
                   </p>
                 </div>
               </div>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-200/60 text-amber-900 font-bold">
-                Tour Booking
+              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
+                status === 'Site Visit Scheduled'
+                  ? 'bg-amber-500 text-white shadow-xs'
+                  : 'bg-amber-200/60 text-amber-900'
+              }`}>
+                {status === 'Site Visit Scheduled' ? 'Visit Scheduled' : status}
               </span>
             </div>
-          )}
+
+            {/* Quick Site Visit Action Buttons */}
+            <div className="pt-2 border-t border-amber-200/60 flex flex-wrap gap-2">
+              {status !== 'Site Visit Scheduled' && (
+                <button
+                  type="button"
+                  onClick={() => handleQuickVisitOutcome('Site Visit Scheduled', 'Site visit confirmed and scheduled with customer.')}
+                  className="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-[11px] transition-colors"
+                >
+                  Schedule Site Visit
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => handleQuickVisitOutcome('Qualified', 'Site visit successfully completed. Client showed high interest.')}
+                className="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] transition-colors flex items-center gap-1"
+              >
+                <CheckCircle2 size={12} />
+                <span>Mark Visit Completed</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVisitOutcome('Contacted', 'Client cancelled / was unable to attend the scheduled site visit.')}
+                className="px-3 py-1.5 rounded-xl bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 font-bold text-[11px] transition-colors"
+              >
+                Client No-Show / Cancelled
+              </button>
+            </div>
+          </div>
 
           {/* Customer Message */}
           <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs">

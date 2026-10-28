@@ -64,6 +64,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/testimonials" className="hover:text-white transition-colors flex items-center gap-1.5">
+                  <ArrowRight size={13} className="text-[#F4B740]" /> Client Testimonials
+                </Link>
+              </li>
+              <li>
                 <Link to="/faq" className="hover:text-white transition-colors flex items-center gap-1.5">
                   <ArrowRight size={13} className="text-[#F4B740]" /> Frequently Asked Questions
                 </Link>
@@ -147,7 +152,13 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} PrimeVista Real Estate. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-gray-300 transition-colors">
+              Terms & Conditions
+            </Link>
             <Link to="/faq" className="hover:text-gray-300 transition-colors">
               FAQ
             </Link>

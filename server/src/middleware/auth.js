@@ -11,9 +11,13 @@ export async function authenticate(req, res, next) {
   }
 
   const token = authHeader.split(' ')[1]
-  const secret = process.env.JWT_SECRET || 'primevista_super_secure_jwt_secret_key_2026_luxury_real_estate'
 
   try {
+    const secret = process.env.JWT_SECRET
+    if (!secret) {
+      throw new Error('JWT_SECRET must be configured in environment variables')
+    }
+
     const decoded = jwt.verify(token, secret, { algorithms: ['HS256'] })
     
     // Validate user still exists and is active

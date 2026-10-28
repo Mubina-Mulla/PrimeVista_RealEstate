@@ -72,10 +72,29 @@ export async function submitInquiry(req, res, next) {
       success: true,
       message: 'Thank you! Your inquiry has been submitted. Our property specialist will contact you shortly.',
       inquiryId: newInquiry._id,
+      data: newInquiry,
     })
   } catch (error) {
     next(error)
   }
+}
+
+// Helper: Verify if an authenticated agent user is permitted to access/modify an inquiry
+async function verifyAgentInquiryAccess(user, inquiry) {
+  if (user.role === 'super_admin' || user.role === 'admin') {
+    return true
+  }
+  if (user.role === 'agent') {
+    const agentProfile = await Agent.findOne({ userAccount: user.id })
+    if (!agentProfile || !inquiry.assignedAgent) {
+      return false
+    }
+    const assignedId = inquiry.assignedAgent._id
+      ? inquiry.assignedAgent._id.toString()
+      : inquiry.assignedAgent.toString()
+    return assignedId === agentProfile._id.toString()
+  }
+  return false
 }
 
 // Admin / Agent: Get Inquiries (Enforces Role-Based Visibility)
@@ -87,9 +106,15 @@ export async function getInquiries(req, res, next) {
     // Role-based scoping: Agents only see assigned inquiries unless Admin/Super Admin
     if (req.user.role === 'agent') {
       const agentProfile = await Agent.findOne({ userAccount: req.user.id })
-      if (agentProfile) {
-        filter.assignedAgent = agentProfile._id
+      if (!agentProfile) {
+        // Agent without active linked profile has 0 accessible inquiries (fail closed)
+        return res.json({
+          success: true,
+          data: [],
+          pagination: { total: 0, page: 1, limit: Number(limit) || 20, totalPages: 0 },
+        })
       }
+      filter.assignedAgent = agentProfile._id
     }
 
     if (status && status !== 'all') {
@@ -148,12 +173,13 @@ export async function getInquiryById(req, res, next) {
       return res.status(404).json({ success: false, message: 'Inquiry record not found' })
     }
 
-    // Agent access check
-    if (req.user.role === 'agent') {
-      const agentProfile = await Agent.findOne({ userAccount: req.user.id })
-      if (agentProfile && inquiry.assignedAgent?.toString() !== agentProfile._id.toString()) {
-        return res.status(403).json({ success: false, message: 'You are not assigned to this inquiry.' })
-      }
+    // Enforce record-level permissions
+    const permitted = await verifyAgentInquiryAccess(req.user, inquiry)
+    if (!permitted) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You do not have permission to view this customer inquiry.',
+      })
     }
 
     return res.json({ success: true, data: inquiry })
@@ -185,6 +211,15 @@ export async function updateInquiryStatus(req, res, next) {
     const inquiry = await Inquiry.findById(id)
     if (!inquiry) {
       return res.status(404).json({ success: false, message: 'Inquiry not found' })
+    }
+
+    // Enforce record-level permissions
+    const permitted = await verifyAgentInquiryAccess(req.user, inquiry)
+    if (!permitted) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You do not have permission to update this inquiry.',
+      })
     }
 
     const oldStatus = inquiry.status
@@ -259,6 +294,15 @@ export async function updateFollowUp(req, res, next) {
     const inquiry = await Inquiry.findById(id)
     if (!inquiry) {
       return res.status(404).json({ success: false, message: 'Inquiry not found' })
+    }
+
+    // Enforce record-level permissions
+    const permitted = await verifyAgentInquiryAccess(req.user, inquiry)
+    if (!permitted) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You do not have permission to schedule follow-ups or add notes to this inquiry.',
+      })
     }
 
     if (followUpDate) {

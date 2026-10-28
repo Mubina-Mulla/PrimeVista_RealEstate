@@ -18,6 +18,9 @@ import { Contact } from './pages/public/Contact.jsx'
 import { FAQ } from './pages/public/FAQ.jsx'
 import { Login } from './pages/public/Login.jsx'
 import { NotFound } from './pages/public/NotFound.jsx'
+import { PrivacyPolicy } from './pages/public/PrivacyPolicy.jsx'
+import { TermsConditions } from './pages/public/TermsConditions.jsx'
+import { Testimonials } from './pages/public/Testimonials.jsx'
 
 // Admin Pages
 import { Dashboard } from './pages/admin/Dashboard.jsx'
@@ -79,6 +82,9 @@ export default function App() {
               <Route path="/agents" element={<Agents />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/testimonials" element={<Testimonials />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsConditions />} />
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />
             </Route>

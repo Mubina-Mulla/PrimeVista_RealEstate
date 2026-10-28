@@ -22,6 +22,13 @@ const __dirname = path.dirname(__filename)
 dotenv.config({ path: path.resolve(__dirname, '../.env') })
 dotenv.config()
 
+// Fail-fast security validation: Refuse to start without valid JWT_SECRET
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error('❌ FATAL: JWT_SECRET environment variable is missing or too short (<32 characters).')
+  console.error('   Server refused to start to prevent token forgery.')
+  process.exit(1)
+}
+
 const app = express()
 const PORT = process.env.PORT || 5001
 
@@ -45,6 +52,7 @@ app.get('/api/health', (req, res) => {
 
   res.json({
     success: true,
+    status: 'ok',
     message: 'PrimeVista Real Estate API is operational',
     timestamp: new Date().toISOString(),
     database: stateMap[dbState] || 'unknown',
@@ -59,6 +67,7 @@ app.use('/api/properties', propertyRoutes)
 app.use('/api/inquiries', inquiryRoutes)
 app.use('/api/agents', agentRoutes)
 app.use('/api/content', contentRoutes)
+app.use('/api/cms', contentRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 
 // 4. Centralized Error Handlers

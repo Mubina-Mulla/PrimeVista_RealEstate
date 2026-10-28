@@ -120,40 +120,45 @@ export function Login() {
           </button>
         </form>
 
-        {/* 1-Click Demo Accounts */}
-        <div className="pt-4 border-t border-gray-100">
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 text-center">
-            One-Click Demo Credentials
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => setDemoRole('super_admin')}
-              className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-center transition-colors"
-            >
-              <span className="block text-xs font-bold text-[#0F4C3A]">Super Admin</span>
-              <span className="block text-[10px] text-gray-500 truncate">Full System</span>
-            </button>
+        {/* 1-Click Demo Accounts (Exclusively in Development Mode) */}
+        {import.meta.env.DEV && (
+          <div className="pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Dev Environment Only
+              </span>
+              <span className="text-[10px] text-gray-400">Not enabled in production</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setDemoRole('super_admin')}
+                className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-center transition-colors cursor-pointer"
+              >
+                <span className="block text-xs font-bold text-[#0F4C3A]">Super Admin</span>
+                <span className="block text-[10px] text-gray-500 truncate">Full System</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setDemoRole('admin')}
-              className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-center transition-colors"
-            >
-              <span className="block text-xs font-bold text-blue-800">Admin</span>
-              <span className="block text-[10px] text-gray-500 truncate">Properties</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setDemoRole('admin')}
+                className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-center transition-colors cursor-pointer"
+              >
+                <span className="block text-xs font-bold text-blue-800">Admin</span>
+                <span className="block text-[10px] text-gray-500 truncate">Properties</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setDemoRole('agent')}
-              className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-center transition-colors"
-            >
-              <span className="block text-xs font-bold text-purple-800">Agent</span>
-              <span className="block text-[10px] text-gray-500 truncate">Inquiries</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setDemoRole('agent')}
+                className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-center transition-colors cursor-pointer"
+              >
+                <span className="block text-xs font-bold text-purple-800">Agent</span>
+                <span className="block text-[10px] text-gray-500 truncate">Inquiries</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="text-center pt-2">
           <Link to="/" className="text-xs text-gray-500 hover:text-[#0F4C3A]">
