@@ -17,32 +17,40 @@ import { api } from '../../api/client.js'
 import { SearchHero } from '../../components/public/SearchHero.jsx'
 import { PropertyCard } from '../../components/public/PropertyCard.jsx'
 import { InquiryModal } from '../../components/public/InquiryModal.jsx'
+import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
 
 export function Home() {
-  const [featuredProperties, setFeaturedProperties] = useState([])
-  const [recentProperties, setRecentProperties] = useState([])
+  const [featuredProperties, setFeaturedProperties] = useState(() =>
+    FALLBACK_PROPERTIES.filter((p) => p.featured)
+  )
+  const [recentProperties, setRecentProperties] = useState(() =>
+    FALLBACK_PROPERTIES.slice(0, 6)
+  )
   const [pageContent, setPageContent] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [activeCategoryFilter, setActiveCategoryFilter] = useState('All')
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
 
   useEffect(() => {
     async function loadHomeData() {
       try {
-        setLoading(true)
         const [featuredRes, recentRes, contentRes] = await Promise.all([
           api.get('/properties/featured').catch(() => ({ data: [] })),
           api.get('/properties?limit=6&sort=newest').catch(() => ({ data: [] })),
           api.get('/content/home').catch(() => ({ data: null })),
         ])
 
-        if (featuredRes?.success) setFeaturedProperties(featuredRes.data || [])
-        if (recentRes?.success) setRecentProperties(recentRes.data || [])
-        if (contentRes?.success) setPageContent(contentRes.data?.sections || null)
+        if (featuredRes?.success && Array.isArray(featuredRes.data) && featuredRes.data.length > 0) {
+          setFeaturedProperties(featuredRes.data)
+        }
+        if (recentRes?.success && Array.isArray(recentRes.data) && recentRes.data.length > 0) {
+          setRecentProperties(recentRes.data)
+        }
+        if (contentRes?.success && contentRes.data?.sections) {
+          setPageContent(contentRes.data.sections)
+        }
       } catch (err) {
-        console.error('Failed to load home page data', err)
-      } finally {
-        setLoading(false)
+        console.warn('Backend not reached, showing default featured properties', err)
       }
     }
 

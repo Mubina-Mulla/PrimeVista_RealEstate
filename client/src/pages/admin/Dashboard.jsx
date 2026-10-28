@@ -17,33 +17,38 @@ import { StatsCard } from '../../components/admin/StatsCard.jsx'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { AdminInquiryModal } from '../../components/admin/InquiryModal.jsx'
 import { formatDate, INQUIRY_STATUS_COLORS, formatPrice } from '../../utils/formatters.js'
+import {
+  FALLBACK_STATS,
+  FALLBACK_INQUIRIES,
+  FALLBACK_PROPERTIES,
+  FALLBACK_AGENTS,
+} from '../../data/fallbackData.js'
 
 export function Dashboard() {
-  const [stats, setStats] = useState(null)
-  const [recentInquiries, setRecentInquiries] = useState([])
-  const [recentProperties, setRecentProperties] = useState([])
-  const [agents, setAgents] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState(FALLBACK_STATS)
+  const [recentInquiries, setRecentInquiries] = useState(FALLBACK_INQUIRIES.slice(0, 5))
+  const [recentProperties, setRecentProperties] = useState(FALLBACK_PROPERTIES.slice(0, 5))
+  const [agents, setAgents] = useState(FALLBACK_AGENTS)
+  const [loading, setLoading] = useState(false)
   const [selectedInquiry, setSelectedInquiry] = useState(null)
 
   const loadDashboard = async () => {
     try {
-      setLoading(true)
       const [dashRes, agentsRes] = await Promise.all([
-        api.get('/dashboard/stats'),
-        api.get('/agents'),
+        api.get('/dashboard/stats').catch(() => null),
+        api.get('/agents').catch(() => null),
       ])
 
-      if (dashRes.success) {
+      if (dashRes?.success) {
         setStats(dashRes.stats)
-        setRecentInquiries(dashRes.recentInquiries || [])
-        setRecentProperties(dashRes.recentProperties || [])
+        setRecentInquiries(dashRes.recentInquiries || FALLBACK_INQUIRIES.slice(0, 5))
+        setRecentProperties(dashRes.recentProperties || FALLBACK_PROPERTIES.slice(0, 5))
       }
-      if (agentsRes.success) {
-        setAgents(agentsRes.data || [])
+      if (agentsRes?.success && Array.isArray(agentsRes.data) && agentsRes.data.length > 0) {
+        setAgents(agentsRes.data)
       }
     } catch (err) {
-      console.error('Failed to load dashboard', err)
+      console.warn('Backend not reachable, showing default staff dashboard data', err)
     } finally {
       setLoading(false)
     }

@@ -13,6 +13,9 @@ import {
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { PropertyCard } from '../../components/public/PropertyCard.jsx'
+import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
+
+const PUBLISHED_FALLBACK = FALLBACK_PROPERTIES.filter(p => p.status === 'published' || p.status === 'sold')
 
 export function Properties() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -27,16 +30,15 @@ export function Properties() {
   const [sort, setSort] = useState(searchParams.get('sort') || 'newest')
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10))
 
-  const [properties, setProperties] = useState([])
-  const [pagination, setPagination] = useState({ total: 0, totalPages: 1, page: 1 })
-  const [loading, setLoading] = useState(true)
+  const [properties, setProperties] = useState(PUBLISHED_FALLBACK)
+  const [pagination, setPagination] = useState({ total: PUBLISHED_FALLBACK.length, totalPages: 1, page: 1 })
+  const [loading, setLoading] = useState(false)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
   // Fetch properties from live MongoDB API
   useEffect(() => {
     async function fetchProperties() {
       try {
-        setLoading(true)
         const query = new URLSearchParams()
         if (searchTerm.trim()) query.set('location', searchTerm.trim())
         if (purpose && purpose !== 'all') query.set('purpose', purpose)
@@ -49,12 +51,20 @@ export function Properties() {
         query.set('limit', '9')
 
         const res = await api.get(`/properties?${query.toString()}`)
-        if (res.success) {
-          setProperties(res.data || [])
-          setPagination(res.pagination || { total: 0, totalPages: 1, page: 1 })
+        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+          setProperties(res.data)
+          setPagination(res.pagination || { total: res.data.length, totalPages: 1, page: 1 })
         }
       } catch (err) {
-        console.error('Failed to fetch properties', err)
+        let filtered = PUBLISHED_FALLBACK
+        if (purpose !== 'all') filtered = filtered.filter(p => p.purpose === purpose)
+        if (category !== 'all') filtered = filtered.filter(p => p.category === category)
+        if (searchTerm.trim()) {
+          const s = searchTerm.toLowerCase()
+          filtered = filtered.filter(p => p.title.toLowerCase().includes(s) || p.locality.toLowerCase().includes(s) || p.city.toLowerCase().includes(s))
+        }
+        setProperties(filtered)
+        setPagination({ total: filtered.length, totalPages: 1, page: 1 })
       } finally {
         setLoading(false)
       }

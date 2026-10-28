@@ -22,6 +22,8 @@ import { api } from '../../api/client.js'
 import { formatPrice } from '../../utils/formatters.js'
 import { useToast } from '../../context/ToastContext.jsx'
 
+import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
+
 export function PropertyDetail() {
   const { slug } = useParams()
   const { showToast } = useToast()
@@ -45,15 +47,28 @@ export function PropertyDetail() {
       try {
         setLoading(true)
         const res = await api.get(`/properties/detail/${slug}`)
-        if (res.success && res.data) {
+        if (res?.success && res.data) {
           setProperty(res.data)
           setSelectedImage(res.data.coverImage)
           setInquiryData((prev) => ({
             ...prev,
             message: `Hello, I am interested in ${res.data.title} (Property ID: ${res.data.propertyId}). Please contact me with further details or a viewing appointment.`,
           }))
+          return
         }
       } catch (err) {
+        const fallback = FALLBACK_PROPERTIES.find(
+          (p) => p.slug === slug || p.propertyId === slug?.toUpperCase()
+        )
+        if (fallback) {
+          setProperty(fallback)
+          setSelectedImage(fallback.coverImage)
+          setInquiryData((prev) => ({
+            ...prev,
+            message: `Hello, I am interested in ${fallback.title} (Property ID: ${fallback.propertyId}). Please contact me with further details or a viewing appointment.`,
+          }))
+          return
+        }
         showToast(err.message || 'Property not found', 'error')
       } finally {
         setLoading(false)

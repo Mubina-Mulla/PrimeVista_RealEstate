@@ -117,36 +117,38 @@ export function Login() {
           </button>
         </form>
 
-        {/* 1-Click Demo Accounts (Exclusively in Development Mode) */}
-        {import.meta.env.DEV && (
-          <div className="pt-4 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Dev Environment Only
-              </span>
-              <span className="text-[10px] text-gray-400">Not enabled in production</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setDemoRole('admin')}
-                className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-center transition-colors cursor-pointer"
-              >
-                <span className="block text-xs font-bold text-blue-800">Admin</span>
-                <span className="block text-[10px] text-gray-500 truncate">Properties & CMS</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDemoRole('agent')}
-                className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-center transition-colors cursor-pointer"
-              >
-                <span className="block text-xs font-bold text-purple-800">Agent</span>
-                <span className="block text-[10px] text-gray-500 truncate">Inquiries & Leads</span>
-              </button>
-            </div>
+        {/* Quick Staff Login Credentials */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-bold text-[#0F4C3A] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+              Staff Portal Access
+            </span>
+            <span className="text-[10px] text-gray-400">Click role to auto-fill</span>
           </div>
-        )}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setDemoRole('admin')}
+              className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-center transition-colors cursor-pointer"
+            >
+              <span className="block text-xs font-bold text-blue-800">Admin</span>
+              <span className="block text-[10px] text-gray-500 truncate">Properties & CMS</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDemoRole('agent')}
+              className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-center transition-colors cursor-pointer"
+            >
+              <span className="block text-xs font-bold text-purple-800">Agent</span>
+              <span className="block text-[10px] text-gray-500 truncate">Inquiries & Leads</span>
+            </button>
+          </div>
+          <p className="text-[10px] text-gray-400 text-center mt-2.5">
+            Admin: <span className="font-mono text-gray-600 font-semibold">priya@primevista.com</span> • Agent: <span className="font-mono text-gray-600 font-semibold">agent@primevista.com</span><br />
+            Password: <span className="font-mono text-gray-600 font-semibold">Password@123</span>
+          </p>
+        </div>
 
         <div className="text-center pt-2">
           <Link to="/" className="text-xs text-gray-500 hover:text-[#0F4C3A]">

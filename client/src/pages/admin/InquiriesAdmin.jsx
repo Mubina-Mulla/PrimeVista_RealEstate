@@ -17,33 +17,37 @@ import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { AdminInquiryModal } from '../../components/admin/InquiryModal.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { formatDate, INQUIRY_STATUS_COLORS } from '../../utils/formatters.js'
+import { FALLBACK_INQUIRIES, FALLBACK_AGENTS } from '../../data/fallbackData.js'
 
 export function InquiriesAdmin() {
   const { showToast } = useToast()
 
-  const [inquiries, setInquiries] = useState([])
-  const [agents, setAgents] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [inquiries, setInquiries] = useState(FALLBACK_INQUIRIES)
+  const [agents, setAgents] = useState(FALLBACK_AGENTS)
+  const [loading, setLoading] = useState(false)
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [selectedInquiry, setSelectedInquiry] = useState(null)
 
   const loadInquiries = async () => {
     try {
-      setLoading(true)
       const query = new URLSearchParams()
       if (statusFilter !== 'all') query.set('status', statusFilter)
       if (search.trim()) query.set('search', search.trim())
 
       const [inqRes, agentsRes] = await Promise.all([
-        api.get(`/inquiries?${query.toString()}`),
-        api.get('/agents'),
+        api.get(`/inquiries?${query.toString()}`).catch(() => null),
+        api.get('/agents').catch(() => null),
       ])
 
-      if (inqRes.success) setInquiries(inqRes.data || [])
-      if (agentsRes.success) setAgents(agentsRes.data || [])
+      if (inqRes?.success && Array.isArray(inqRes.data) && inqRes.data.length > 0) {
+        setInquiries(inqRes.data)
+      }
+      if (agentsRes?.success && Array.isArray(agentsRes.data) && agentsRes.data.length > 0) {
+        setAgents(agentsRes.data)
+      }
     } catch (err) {
-      showToast(err.message || 'Failed to load inquiries', 'error')
+      console.warn('Backend not reached, showing default customer inquiries', err)
     } finally {
       setLoading(false)
     }

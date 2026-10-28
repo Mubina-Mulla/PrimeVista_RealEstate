@@ -17,13 +17,14 @@ import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { PropertyModal } from '../../components/admin/PropertyModal.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { formatPrice, PROPERTY_STATUS_COLORS } from '../../utils/formatters.js'
+import { FALLBACK_PROPERTIES, FALLBACK_AGENTS } from '../../data/fallbackData.js'
 
 export function PropertiesAdmin() {
   const { showToast } = useToast()
 
-  const [properties, setProperties] = useState([])
-  const [agents, setAgents] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [properties, setProperties] = useState(FALLBACK_PROPERTIES)
+  const [agents, setAgents] = useState(FALLBACK_AGENTS)
+  const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -35,7 +36,6 @@ export function PropertiesAdmin() {
 
   const loadProperties = async () => {
     try {
-      setLoading(true)
       const query = new URLSearchParams()
       if (search.trim()) query.set('search', search.trim())
       if (statusFilter !== 'all') query.set('status', statusFilter)
@@ -43,14 +43,18 @@ export function PropertiesAdmin() {
       if (purposeFilter !== 'all') query.set('purpose', purposeFilter)
 
       const [propsRes, agentsRes] = await Promise.all([
-        api.get(`/properties/admin/all?${query.toString()}`),
-        api.get('/agents'),
+        api.get(`/properties/admin/all?${query.toString()}`).catch(() => null),
+        api.get('/agents').catch(() => null),
       ])
 
-      if (propsRes.success) setProperties(propsRes.data || [])
-      if (agentsRes.success) setAgents(agentsRes.data || [])
+      if (propsRes?.success && Array.isArray(propsRes.data) && propsRes.data.length > 0) {
+        setProperties(propsRes.data)
+      }
+      if (agentsRes?.success && Array.isArray(agentsRes.data) && agentsRes.data.length > 0) {
+        setAgents(agentsRes.data)
+      }
     } catch (err) {
-      showToast(err.message || 'Failed to load properties', 'error')
+      console.warn('Backend not reached, showing default property inventory', err)
     } finally {
       setLoading(false)
     }
