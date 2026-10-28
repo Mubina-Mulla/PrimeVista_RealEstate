@@ -2,22 +2,67 @@ import React, { useEffect, useState } from 'react'
 import { Phone, Mail, Award, CheckCircle2, Building2 } from 'lucide-react'
 import { api } from '../../api/client.js'
 
+const DEFAULT_AGENTS = [
+  {
+    _id: 'agent-1',
+    name: 'Vikramaditya Roy',
+    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
+    role: 'Senior Luxury Property Specialist',
+    email: 'agent@primevista.com',
+    phone: '+91 98765 43210',
+    description: 'Specializes in high-net-worth residential acquisitions, penthouses, and heritage estates with 10+ years experience.',
+    experience: '10+ Years',
+    propertiesListed: 4,
+  },
+  {
+    _id: 'agent-2',
+    name: 'Ananya Sen',
+    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+    role: 'Commercial & Retail Leasing Head',
+    email: 'ananya@primevista.com',
+    phone: '+91 98234 56789',
+    description: 'Expert in prime tech park office leases, flagship commercial showrooms, and investment yield advisory.',
+    experience: '8+ Years',
+    propertiesListed: 3,
+  },
+  {
+    _id: 'agent-3',
+    name: 'Rohit Malhotra',
+    photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80',
+    role: 'Residential & Villa Consultant',
+    email: 'rohit@primevista.com',
+    phone: '+91 97123 45678',
+    description: 'Dedicated to helping families discover peaceful gated communities, luxury villas, and smart green homes.',
+    experience: '6+ Years',
+    propertiesListed: 5,
+  },
+  {
+    _id: 'agent-4',
+    name: 'Pooja Hegde',
+    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80',
+    role: 'Prime Investment Portfolio Advisor',
+    email: 'pooja@primevista.com',
+    phone: '+91 99887 76655',
+    description: 'Consultant for private real estate investment trusts, high-yield land parcels, and pre-launch luxury developments.',
+    experience: '7+ Years',
+    propertiesListed: 2,
+  },
+]
+
 export function Agents() {
-  const [agents, setAgents] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [agents, setAgents] = useState(DEFAULT_AGENTS)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     async function loadAgents() {
       try {
-        setLoading(true)
         const res = await api.get('/agents')
-        if (res.success) {
-          setAgents(res.data || [])
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setAgents(res.data)
         }
       } catch (err) {
-        console.error('Failed to load agents', err)
-      } finally {
-        setLoading(false)
+        // Fallback to DEFAULT_AGENTS if API is offline or hosted separately
+        console.warn('Backend not reached, showing default leadership team data', err)
       }
     }
     loadAgents()

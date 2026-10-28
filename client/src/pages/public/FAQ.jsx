@@ -3,43 +3,47 @@ import { Link } from 'react-router-dom'
 import { ChevronDown, HelpCircle, Phone, ArrowRight } from 'lucide-react'
 import { api } from '../../api/client.js'
 
+const DEFAULT_FAQS = [
+  {
+    question: 'Are all properties listed on PrimeVista legally verified?',
+    answer: 'Yes. Every residential and commercial listing undergoes strict title due diligence, municipal clearance checks, and encumbrance verification before publication.',
+  },
+  {
+    question: 'How do I schedule a physical site visit for a property?',
+    answer: 'Simply click "Schedule a Site Visit" on any property details page, pick your preferred date and time, and our assigned property specialist will confirm and escort you.',
+  },
+  {
+    question: 'Do you charge a brokerage fee for buying a property?',
+    answer: 'For primary developer sales (pre-launches and new projects), there is 0% brokerage charge to buyers. For secondary resale and rental transactions, standard institutional advisory fees apply.',
+  },
+  {
+    question: 'Can you assist with home loans and legal documentation?',
+    answer: 'PrimeVista has partnered with leading banking institutions (HDFC, SBI, ICICI, Axis) to offer swift loan pre-approvals and lower interest rates, as well as on-ground registration support.',
+  },
+  {
+    question: 'How does PrimeVista protect my contact information?',
+    answer: 'We strictly protect customer privacy. Your phone and email are never sold or shared with third-party advertisers. Only your assigned PrimeVista advisor will contact you.',
+  },
+  {
+    question: 'What documentation is required to reserve a property?',
+    answer: 'To reserve a property, you will need a valid government photo ID (PAN/Aadhaar/Passport), proof of residence, and an initial booking token handled through formal developer escrow.',
+  },
+]
+
 export function FAQ() {
-  const [faqs, setFaqs] = useState([])
+  const [faqs, setFaqs] = useState(DEFAULT_FAQS)
   const [openIndex, setOpenIndex] = useState(0)
 
   useEffect(() => {
     async function loadFaqs() {
       try {
         const res = await api.get('/content/faq')
-        if (res.success && res.data?.sections?.faqs) {
+        if (res.success && Array.isArray(res.data?.sections?.faqs) && res.data.sections.faqs.length > 0) {
           setFaqs(res.data.sections.faqs)
-        } else {
-          // Fallback defaults
-          setFaqs([
-            {
-              question: 'Are all properties listed on PrimeVista legally verified?',
-              answer: 'Yes. Every residential and commercial listing undergoes strict title due diligence, municipal clearance checks, and encumbrance verification before publication.',
-            },
-            {
-              question: 'How do I schedule a physical site visit for a property?',
-              answer: 'Simply click "Schedule a Site Visit" on any property details page, pick your preferred date and time, and our assigned property specialist will confirm and escort you.',
-            },
-            {
-              question: 'Do you charge a brokerage fee for buying a property?',
-              answer: 'For primary developer sales (pre-launches and new projects), there is 0% brokerage charge to buyers. For secondary resale and rental transactions, standard institutional advisory fees apply.',
-            },
-            {
-              question: 'Can you assist with home loans and legal documentation?',
-              answer: 'PrimeVista has partnered with leading banking institutions (HDFC, SBI, ICICI, Axis) to offer swift loan pre-approvals and lower interest rates, as well as on-ground registration support.',
-            },
-            {
-              question: 'How does PrimeVista protect my contact information?',
-              answer: 'We strictly protect customer privacy. Your phone and email are never sold or shared with third-party advertisers. Only your assigned PrimeVista advisor will contact you.',
-            },
-          ])
         }
       } catch (err) {
-        // Keep fallback
+        // Retains DEFAULT_FAQS if API is offline or hosted separately
+        console.warn('Backend not reached, showing default verified FAQ content', err)
       }
     }
     loadFaqs()
