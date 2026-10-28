@@ -269,13 +269,13 @@ export function Properties() {
 
         {/* Results Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="bg-white rounded-2xl h-96 animate-pulse border border-gray-100" />
             ))}
           </div>
         ) : properties.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {properties.map((property) => (
               <PropertyCard key={property._id} property={property} />
             ))}

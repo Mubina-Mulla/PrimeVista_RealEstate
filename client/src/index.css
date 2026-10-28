@@ -67,3 +67,18 @@
   transform: translateY(-4px);
   box-shadow: 0 20px 25px -5px rgba(15, 76, 58, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
+
+/* Touch & Mobile UX Optimizations */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbar for smooth horizontal swipe pills on mobile */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -40,8 +40,8 @@ export function Login() {
   }
 
   return (
-    <div className="min-h-[85vh] bg-[#F5F7F5] flex items-center justify-center p-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-gray-100 space-y-8">
+    <div className="min-h-[85vh] bg-[#F5F7F5] flex items-center justify-center px-4 py-8 sm:py-12">
+      <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-gray-100 space-y-6 sm:space-y-8">
         {/* Brand header */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2 group mb-4">

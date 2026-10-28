@@ -195,28 +195,28 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[95vh] sm:max-h-[92vh]">
         {/* Header */}
-        <div className="bg-[#0F4C3A] text-white p-6 relative flex items-center justify-between">
+        <div className="bg-[#0F4C3A] text-white p-4 sm:p-6 relative flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold tracking-widest text-[#F4B740]">
               {isEditing ? `Edit Listing (${property.propertyId})` : 'New Property Entry'}
             </span>
-            <h3 className="text-xl font-bold font-['Poppins']">
+            <h3 className="text-lg sm:text-xl font-bold font-['Poppins']">
               {isEditing ? property.title : 'Add Property to Database'}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+            className="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 flex-1 text-xs">
           {/* Section 1: Core Info */}
           <div>
             <h4 className="font-bold text-gray-900 text-sm mb-3 font-['Poppins']">

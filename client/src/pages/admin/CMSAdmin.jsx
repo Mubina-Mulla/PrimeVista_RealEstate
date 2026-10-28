@@ -102,10 +102,11 @@ export function CMSAdmin() {
         </div>
 
         {/* Page Tabs */}
-        <div className="flex items-center gap-2 border-b border-gray-200">
+        <div className="flex items-center gap-2 border-b border-gray-200 overflow-x-auto pb-px scrollbar-none">
           <button
+            type="button"
             onClick={() => setActiveTab('home')}
-            className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-all ${
+            className={`px-4 sm:px-5 py-2.5 text-xs font-bold border-b-2 transition-all shrink-0 cursor-pointer ${
               activeTab === 'home'
                 ? 'border-[#0F4C3A] text-[#0F4C3A]'
                 : 'border-transparent text-gray-500 hover:text-gray-900'
@@ -114,8 +115,9 @@ export function CMSAdmin() {
             Homepage Content
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('contact')}
-            className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-all ${
+            className={`px-4 sm:px-5 py-2.5 text-xs font-bold border-b-2 transition-all shrink-0 cursor-pointer ${
               activeTab === 'contact'
                 ? 'border-[#0F4C3A] text-[#0F4C3A]'
                 : 'border-transparent text-gray-500 hover:text-gray-900'
@@ -126,7 +128,7 @@ export function CMSAdmin() {
         </div>
 
         {/* Content Edit Form */}
-        <form onSubmit={handleSave} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-6 text-xs">
+        <form onSubmit={handleSave} className="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-gray-100 space-y-6 text-xs">
           {activeTab === 'home' ? (
             <div className="space-y-4">
               <h3 className="font-bold text-gray-900 text-sm font-['Poppins'] flex items-center gap-2">

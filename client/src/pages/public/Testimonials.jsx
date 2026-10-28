@@ -79,21 +79,21 @@ export function Testimonials() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] py-12 md:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen bg-[#F5F7F5] py-8 sm:py-12 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-[#0F4C3A]">
             Client Success & Stories
           </span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
+          <h1 className="mt-2 text-3xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
             What Our Clients Say
           </h1>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
             Read authentic feedback from high-net-worth families, expatriates, and corporate enterprises who discovered their prime spaces through PrimeVista.
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-white shadow-xs border border-gray-200 text-xs font-bold text-gray-800">
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2.5 rounded-full bg-white shadow-xs border border-gray-200 text-xs font-bold text-gray-800">
             <div className="flex items-center gap-1 text-[#F4B740]">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} size={15} className="fill-[#F4B740]" />
@@ -104,11 +104,11 @@ export function Testimonials() {
         </div>
 
         {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {reviews.map((rev) => (
             <article
               key={rev.id}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
+              className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
             >
               <div>
                 {/* Rating Stars & Year */}

@@ -39,24 +39,24 @@ export function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] py-12 md:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen bg-[#F5F7F5] py-8 sm:py-12 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         <div className="text-center max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-[#0F4C3A]">
             Get In Touch
           </span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
+          <h1 className="mt-2 text-3xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
             Contact PrimeVista
           </h1>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
             Have a question about a listed property or wish to list your luxury residence? Reach out to our executive advisory desk.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left: Office Details (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 space-y-6">
+            <div className="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-gray-100 space-y-6">
               <h3 className="text-xl font-bold text-[#1F2937] font-['Poppins']">
                 Corporate Headquarters
               </h3>
@@ -130,7 +130,7 @@ export function Contact() {
           </div>
 
           {/* Right: Contact Form (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-100">
+          <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-xl border border-gray-100">
             <h3 className="text-2xl font-bold text-[#1F2937] font-['Poppins']">
               Send an Inquiry Message
             </h3>

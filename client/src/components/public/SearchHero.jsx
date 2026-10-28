@@ -60,7 +60,7 @@ export function SearchHero({ heroData }) {
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15]">
                 {titleText}{' '}
                 <span className="block text-[#F4B740] mt-1 drop-shadow-xs">
                   {highlightText}
@@ -68,15 +68,15 @@ export function SearchHero({ heroData }) {
               </h1>
 
               {/* Description */}
-              <p className="max-w-xl text-base sm:text-lg text-emerald-100/90 leading-relaxed font-normal">
+              <p className="max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 leading-relaxed font-normal">
                 {descriptionText}
               </p>
 
               {/* Quick Action buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <a
                   href="#search-bar"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all transform hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all transform hover:-translate-y-0.5 text-center"
                 >
                   <span>Explore Properties</span>
                   <ArrowRight size={18} />
@@ -84,46 +84,46 @@ export function SearchHero({ heroData }) {
 
                 <button
                   onClick={() => navigate('/contact')}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base backdrop-blur-sm transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base backdrop-blur-sm transition-all text-center"
                 >
                   Contact Our Team
                 </button>
               </div>
 
               {/* Trust Metrics pill */}
-              <div className="pt-4 flex items-center gap-6 text-xs sm:text-sm text-emerald-200/80">
+              <div className="pt-4 flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-emerald-200/80">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-[#F4B740]" />
+                  <ShieldCheck size={18} className="text-[#F4B740] shrink-0" />
                   <span>Verified Legal Clearances</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Sparkles size={18} className="text-[#F4B740]" />
+                  <Sparkles size={18} className="text-[#F4B740] shrink-0" />
                   <span>Curated Luxury Architecture</span>
                 </div>
               </div>
             </div>
 
             {/* Right Hero Image Card */}
-            <div className="lg:col-span-5 relative">
+            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl bg-emerald-950/40">
                   <img
                     src={heroImage}
                     alt="Luxury architectural residence by PrimeVista"
-                    className="w-full h-[360px] sm:h-[440px] object-cover transition-transform duration-700 hover:scale-105"
+                    className="w-full h-[280px] sm:h-[380px] lg:h-[440px] object-cover transition-transform duration-700 hover:scale-105"
                   />
                 </div>
 
                 {/* Floating card indicator */}
-                <div className="absolute -bottom-6 left-6 right-6 sm:left-8 sm:right-auto sm:max-w-xs p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3.5 animate-in fade-in duration-500">
-                  <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
-                    <Building2 size={24} />
+                <div className="absolute -bottom-5 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
+                    <Building2 size={22} />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                       Verified Portfolio
                     </p>
-                    <p className="text-sm font-bold text-[#0F4C3A] leading-tight">
+                    <p className="text-xs sm:text-sm font-bold text-[#0F4C3A] leading-tight">
                       Better Spaces for Your Future
                     </p>
                   </div>
@@ -135,9 +135,9 @@ export function SearchHero({ heroData }) {
       </section>
 
       {/* Overlapping Interactive Search Filter Box */}
-      <div id="search-bar" className="relative z-20 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 -mt-10 sm:-mt-12">
-        <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-2xl border border-gray-100">
-          <form onSubmit={handleSearch} className="space-y-5">
+      <div id="search-bar" className="relative z-20 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12">
+        <div className="bg-white rounded-2xl p-4 sm:p-7 shadow-2xl border border-gray-100">
+          <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
             {/* Purpose Tabs: Buy vs Rent */}
             <div className="flex items-center gap-2 pb-1 border-b border-gray-100">
               {['Buy', 'Rent'].map((tab) => (
@@ -145,7 +145,7 @@ export function SearchHero({ heroData }) {
                   key={tab}
                   type="button"
                   onClick={() => setPurpose(tab)}
-                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+                  className={`flex-1 sm:flex-initial px-6 py-2 rounded-xl text-sm font-bold transition-all text-center ${
                     purpose === tab
                       ? 'bg-[#0F4C3A] text-white shadow-md shadow-[#0F4C3A]/20'
                       : 'bg-[#F5F7F5] text-gray-600 hover:bg-gray-200'

@@ -72,17 +72,17 @@ export function Dashboard() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
             <Link
               to="/admin/properties"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white text-xs font-bold shadow-md shadow-[#0F4C3A]/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white text-xs font-bold shadow-md shadow-[#0F4C3A]/20 transition-all text-center"
             >
               <Building2 size={16} />
               <span>Manage Properties</span>
             </Link>
             <Link
               to="/admin/inquiries"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-all text-center"
             >
               <Inbox size={16} />
               <span>View All Leads</span>
@@ -163,7 +163,7 @@ export function Dashboard() {
         {/* 2-Column Split: Recent Inquiries & Recent Properties */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Recent Customer Inquiries (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+          <div className="lg:col-span-7 bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div>
                 <h3 className="text-base font-bold text-gray-900 font-['Poppins']">
@@ -188,7 +188,7 @@ export function Dashboard() {
                   <div
                     key={inq._id}
                     onClick={() => setSelectedInquiry(inq)}
-                    className="p-4 rounded-2xl bg-[#F5F7F5] hover:bg-emerald-50/50 border border-gray-200/60 transition-all cursor-pointer flex items-center justify-between gap-4"
+                    className="p-3.5 sm:p-4 rounded-2xl bg-[#F5F7F5] hover:bg-emerald-50/50 border border-gray-200/60 transition-all cursor-pointer flex items-center justify-between gap-3 sm:gap-4"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ export function Dashboard() {
           </div>
 
           {/* Recent Property Additions (5 cols) */}
-          <div className="lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+          <div className="lg:col-span-5 bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div>
                 <h3 className="text-base font-bold text-gray-900 font-['Poppins']">

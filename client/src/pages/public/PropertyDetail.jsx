@@ -178,7 +178,7 @@ export function PropertyDetail() {
         </div>
 
         {/* Property Header Banner */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 mb-8">
+        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -207,11 +207,11 @@ export function PropertyDetail() {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2937] font-['Poppins'] leading-tight">
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2937] font-['Poppins'] leading-tight">
                 {property.title}
               </h1>
 
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
                 <MapPin size={16} className="text-[#0F4C3A] shrink-0" />
                 <span>
                   {property.address ? `${property.address}, ` : ''}{property.locality}, {property.city}
@@ -224,7 +224,7 @@ export function PropertyDetail() {
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">
                 {property.purpose === 'Rent' || property.purpose === 'For Rent' ? 'Monthly Lease' : 'Investment Price'}
               </span>
-              <div className="text-3xl sm:text-4xl font-black text-[#0F4C3A] font-['Poppins']">
+              <div className="text-2xl sm:text-4xl font-black text-[#0F4C3A] font-['Poppins']">
                 {formatPrice(property.price, property.purpose, property.rentalPeriod)}
               </div>
             </div>
@@ -232,8 +232,8 @@ export function PropertyDetail() {
         </div>
 
         {/* Gallery Section */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-8 space-y-4">
-          <div className="aspect-16/9 w-full max-h-[500px] rounded-2xl overflow-hidden bg-gray-100 shadow-inner">
+        <div className="bg-white rounded-3xl p-3.5 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8 space-y-3 sm:space-y-4">
+          <div className="aspect-4/3 sm:aspect-16/9 w-full max-h-[500px] rounded-2xl overflow-hidden bg-gray-100 shadow-inner">
             <img
               src={selectedImage}
               alt={property.title}
@@ -243,12 +243,12 @@ export function PropertyDetail() {
 
           {/* Thumbnails row */}
           {allImages.length > 1 && (
-            <div className="flex items-center gap-3 overflow-x-auto pb-2">
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-thin">
               {allImages.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`w-24 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
+                  className={`w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
                     selectedImage === img
                       ? 'border-[#0F4C3A] ring-2 ring-[#0F4C3A]/20 scale-105'
                       : 'border-transparent opacity-70 hover:opacity-100'
@@ -264,16 +264,16 @@ export function PropertyDetail() {
         {/* 2-Column Content Layout: Left Details, Right Sticky Inquiry Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Details (8 cols) */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-6 sm:space-y-8">
             {/* Key Specifications Grid */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold text-[#1F2937] font-['Poppins'] mb-6 flex items-center gap-2">
+            <div className="bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-gray-100">
+              <h3 className="text-base sm:text-lg font-bold text-[#1F2937] font-['Poppins'] mb-4 sm:mb-6 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0F4C3A]" />
                 Key Specifications
               </h3>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                <div className="p-4 rounded-2xl bg-[#F5F7F5] border border-gray-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+                <div className="p-3 sm:p-4 rounded-2xl bg-[#F5F7F5] border border-gray-100">
                   <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
                     <Bed size={16} className="text-[#0F4C3A]" />
                     <span>Bedrooms</span>

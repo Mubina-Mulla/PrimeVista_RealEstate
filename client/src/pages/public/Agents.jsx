@@ -69,28 +69,28 @@ export function Agents() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] py-12 md:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen bg-[#F5F7F5] py-8 sm:py-12 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         <div className="text-center max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-[#0F4C3A]">
             Expert Property Advisors
           </span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
+          <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-black text-[#1F2937] font-['Poppins']">
             Meet Our Leadership Team
           </h1>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
             Dedicated specialists with hyper-local neighborhood insights, extensive transaction track records, and unwavering client advocacy.
           </p>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-3xl h-96 animate-pulse border border-gray-100" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
             {agents.map((agent) => (
               <div
                 key={agent._id}

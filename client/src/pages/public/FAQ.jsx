@@ -50,22 +50,22 @@ export function FAQ() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] py-12 md:py-20">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen bg-[#F5F7F5] py-8 sm:py-12 md:py-20">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
         <div className="text-center max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-[#0F4C3A]">
             Answers & Clarity
           </span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
+          <h1 className="mt-2 text-3xl sm:text-5xl font-black text-[#1F2937] font-['Poppins']">
             Frequently Asked Questions
           </h1>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
             Got questions about purchasing, site visits, legal checks, or home loans? Find comprehensive answers below.
           </p>
         </div>
 
         {/* Accordion FAQ list */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index
             return (
@@ -76,16 +76,16 @@ export function FAQ() {
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-gray-900 font-['Poppins'] text-sm sm:text-base hover:text-[#0F4C3A] transition-colors"
+                  className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-gray-900 font-['Poppins'] text-xs sm:text-base hover:text-[#0F4C3A] transition-colors"
                 >
-                  <span className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-emerald-50 text-[#0F4C3A] text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                  <span className="flex items-center gap-2.5 sm:gap-3">
+                    <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#0F4C3A] text-[11px] sm:text-xs font-mono font-bold flex items-center justify-center shrink-0">
                       0{index + 1}
                     </span>
                     <span>{faq.question}</span>
                   </span>
                   <ChevronDown
-                    size={20}
+                    size={18}
                     className={`text-[#0F4C3A] shrink-0 transition-transform duration-300 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
@@ -93,7 +93,7 @@ export function FAQ() {
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 pt-1 text-sm text-gray-600 leading-relaxed font-normal border-t border-gray-50 animate-in fade-in duration-200">
+                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-1 text-xs sm:text-sm text-gray-600 leading-relaxed font-normal border-t border-gray-50 animate-in fade-in duration-200">
                     {faq.answer}
                   </div>
                 )}

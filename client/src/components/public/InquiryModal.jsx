@@ -48,21 +48,21 @@ export function InquiryModal({ isOpen, onClose, property }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[95vh] sm:max-h-[90vh]">
         {/* Modal Header */}
-        <div className="bg-[#0F4C3A] text-white p-6 relative">
+        <div className="bg-[#0F4C3A] text-white p-4 sm:p-6 relative">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-4 sm:top-5 right-4 sm:right-5 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
 
-          <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#F4B740] text-[#0F4C3A] text-xs font-bold uppercase tracking-wider mb-2">
+          <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#F4B740] text-[#0F4C3A] text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
             {formData.inquiryType === 'site_visit' ? 'Schedule a Site Visit' : 'Inquire on Property'}
           </span>
-          <h3 className="text-xl font-bold font-['Poppins']">
+          <h3 className="text-lg sm:text-xl font-bold font-['Poppins']">
             {property ? property.title : 'Schedule Property Consultation'}
           </h3>
           {property && (
@@ -73,7 +73,7 @@ export function InquiryModal({ isOpen, onClose, property }) {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           {submitted ? (
             <div className="text-center py-8 space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#0F4C3A] flex items-center justify-center mx-auto">

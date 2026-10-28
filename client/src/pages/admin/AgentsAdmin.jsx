@@ -141,14 +141,14 @@ export function AgentsAdmin() {
         </div>
 
         {/* Agents Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {loading ? (
             <p className="text-xs text-gray-400">Loading agents...</p>
           ) : (
             agents.map((ag) => (
               <div
                 key={ag._id}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between"
+                className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-gray-100 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center gap-4">

@@ -21,30 +21,30 @@ export function About() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] py-12 md:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="min-h-screen bg-[#F5F7F5] py-8 sm:py-12 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-16">
         {/* Header Hero */}
         <div className="max-w-3xl">
           <span className="text-xs font-bold uppercase tracking-widest text-[#0F4C3A]">
             About PrimeVista
           </span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-black text-[#1F2937] font-['Poppins'] leading-tight">
+          <h1 className="mt-2 text-3xl sm:text-5xl font-black text-[#1F2937] font-['Poppins'] leading-tight">
             Redefining Real Estate with <br />
             <span className="text-[#0F4C3A]">Integrity & Sophistication</span>
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-gray-600 leading-relaxed font-normal">
+          <p className="mt-3 sm:mt-4 text-sm sm:text-lg text-gray-600 leading-relaxed font-normal">
             {content?.story ||
               'Founded with a mission to bring complete transparency and architectural prestige to the Indian real estate landscape, PrimeVista represents the standard of excellence in property advisory. We don’t just showcase listings; we curate homes where memories are built and spaces that power business dreams.'}
           </p>
         </div>
 
         {/* 2-Column Banner */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-gray-100">
             <img
               src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
               alt="PrimeVista luxury headquarters"
-              className="w-full h-[400px] object-cover"
+              className="w-full h-[260px] sm:h-[400px] object-cover"
             />
           </div>
 
@@ -84,7 +84,7 @@ export function About() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
             {[
               {
                 title: 'Zero Compromise Transparency',
@@ -99,7 +99,7 @@ export function About() {
                 desc: 'From the first site inspection to key handover and registry, we stand beside you.',
               },
             ].map((val) => (
-              <div key={val.title} className="p-8 rounded-2xl bg-white shadow-sm border border-gray-100">
+              <div key={val.title} className="p-5 sm:p-8 rounded-2xl bg-white shadow-sm border border-gray-100">
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#0F4C3A] flex items-center justify-center mb-4">
                   <CheckCircle2 size={24} />
                 </div>
@@ -111,7 +111,7 @@ export function About() {
         </div>
 
         {/* Call to action */}
-        <div className="bg-[#0F4C3A] rounded-3xl p-8 sm:p-12 text-white text-center flex flex-col items-center">
+        <div className="bg-[#0F4C3A] rounded-3xl p-6 sm:p-12 text-white text-center flex flex-col items-center">
           <h2 className="text-2xl sm:text-3xl font-black font-['Poppins']">
             Meet the Specialists Behind PrimeVista
           </h2>

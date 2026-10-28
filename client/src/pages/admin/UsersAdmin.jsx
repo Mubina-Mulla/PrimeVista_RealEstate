@@ -112,77 +112,79 @@ export function UsersAdmin() {
 
         {/* Users Table */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
-              <tr>
-                <th className="py-4 px-5">Staff Name</th>
-                <th className="py-4 px-4">Email</th>
-                <th className="py-4 px-4">Role & Scope</th>
-                <th className="py-4 px-4">Account Status</th>
-                <th className="py-4 px-4">Created Date</th>
-                <th className="py-4 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {loading ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[650px]">
+              <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
                 <tr>
-                  <td colSpan="6" className="py-12 text-center text-gray-400">
-                    Loading staff database...
-                  </td>
+                  <th className="py-4 px-5">Staff Name</th>
+                  <th className="py-4 px-4">Email</th>
+                  <th className="py-4 px-4">Role & Scope</th>
+                  <th className="py-4 px-4">Account Status</th>
+                  <th className="py-4 px-4">Created Date</th>
+                  <th className="py-4 px-4 text-right">Actions</th>
                 </tr>
-              ) : (
-                users.map((usr) => (
-                  <tr key={usr._id} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="py-3.5 px-5 font-bold text-gray-900 font-['Poppins']">
-                      {usr.name}
-                    </td>
-                    <td className="py-3.5 px-4 text-gray-600 font-medium">
-                      {usr.email}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          usr.role === 'super_admin'
-                            ? 'bg-emerald-100 text-[#0F4C3A]'
-                            : usr.role === 'admin'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-purple-100 text-purple-800'
-                        }`}
-                      >
-                        {usr.role.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          usr.active
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
-                      >
-                        {usr.active ? 'Active' : 'Deactivated'}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-gray-500">
-                      {formatDate(usr.createdAt)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => handleToggleStatus(usr._id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                          usr.active
-                            ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
-                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                        }`}
-                      >
-                        {usr.active ? 'Deactivate' : 'Activate'}
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="py-12 text-center text-gray-400">
+                      Loading staff database...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  users.map((usr) => (
+                    <tr key={usr._id} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="py-3.5 px-5 font-bold text-gray-900 font-['Poppins']">
+                        {usr.name}
+                      </td>
+                      <td className="py-3.5 px-4 text-gray-600 font-medium">
+                        {usr.email}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            usr.role === 'super_admin'
+                              ? 'bg-emerald-100 text-[#0F4C3A]'
+                              : usr.role === 'admin'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}
+                        >
+                          {usr.role.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            usr.active
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          }`}
+                        >
+                          {usr.active ? 'Active' : 'Deactivated'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-gray-500">
+                        {formatDate(usr.createdAt)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => handleToggleStatus(usr._id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                            usr.active
+                              ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
+                              : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                          }`}
+                        >
+                          {usr.active ? 'Deactivate' : 'Activate'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
