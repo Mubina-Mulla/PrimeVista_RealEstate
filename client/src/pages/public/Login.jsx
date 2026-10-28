@@ -30,10 +30,7 @@ export function Login() {
 
   // Quick 1-click test credentials handler
   const setDemoRole = (role) => {
-    if (role === 'super_admin') {
-      setEmail('admin@primevista.com')
-      setPassword('Password@123')
-    } else if (role === 'admin') {
+    if (role === 'admin') {
       setEmail('priya@primevista.com')
       setPassword('Password@123')
     } else if (role === 'agent') {
@@ -129,23 +126,14 @@ export function Login() {
               </span>
               <span className="text-[10px] text-gray-400">Not enabled in production</span>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setDemoRole('super_admin')}
-                className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-center transition-colors cursor-pointer"
-              >
-                <span className="block text-xs font-bold text-[#0F4C3A]">Super Admin</span>
-                <span className="block text-[10px] text-gray-500 truncate">Full System</span>
-              </button>
-
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setDemoRole('admin')}
                 className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-center transition-colors cursor-pointer"
               >
                 <span className="block text-xs font-bold text-blue-800">Admin</span>
-                <span className="block text-[10px] text-gray-500 truncate">Properties</span>
+                <span className="block text-[10px] text-gray-500 truncate">Properties & CMS</span>
               </button>
 
               <button
@@ -154,7 +142,7 @@ export function Login() {
                 className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-center transition-colors cursor-pointer"
               >
                 <span className="block text-xs font-bold text-purple-800">Agent</span>
-                <span className="block text-[10px] text-gray-500 truncate">Inquiries</span>
+                <span className="block text-[10px] text-gray-500 truncate">Inquiries & Leads</span>
               </button>
             </div>
           </div>
