@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { z } from 'zod'
 import { Property } from '../models/Property.js'
 import { slugify } from '../utils/slugify.js'
@@ -137,15 +138,32 @@ export async function getFeaturedProperties(req, res, next) {
   }
 }
 
-// Public: Get Property by Slug or Unique Property ID (e.g. PV-101)
+// Public: Get Property by Slug or Unique Property ID (e.g. PV-101) or Mongo _id
 export async function getPropertyBySlugOrId(req, res, next) {
   try {
     const { identifier } = req.params
 
-    const property = await Property.findOne({
-      $or: [{ slug: identifier }, { propertyId: identifier.toUpperCase() }],
+    const orConditions = [
+      { slug: identifier },
+      { propertyId: identifier.toUpperCase() },
+      { propertyId: identifier },
+    ]
+
+    if (mongoose.isValidObjectId(identifier)) {
+      orConditions.push({ _id: identifier })
+    }
+
+    let property = await Property.findOne({
+      $or: orConditions,
       status: { $in: ['published', 'sold', 'rented'] },
     }).populate('assignedAgent', 'name photo role phone email description experience')
+
+    // Fallback: check any status so staff/admins can preview draft or archived properties
+    if (!property) {
+      property = await Property.findOne({
+        $or: orConditions,
+      }).populate('assignedAgent', 'name photo role phone email description experience')
+    }
 
     if (!property) {
       return res.status(404).json({

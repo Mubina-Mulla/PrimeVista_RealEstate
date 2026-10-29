@@ -207,7 +207,7 @@ export function PropertiesAdmin() {
         {/* Action Buttons Toolbar */}
         <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
           <Link
-            to={`/properties/${prop._id}`}
+            to={`/properties/${prop.slug || prop.propertyId || prop._id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold transition-colors"
@@ -485,7 +485,7 @@ export function PropertiesAdmin() {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            to={`/properties/${prop._id}`}
+                            to={`/properties/${prop.slug || prop.propertyId || prop._id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-1.5 rounded-lg text-gray-400 hover:text-[#0F4C3A] hover:bg-emerald-50 transition-colors"

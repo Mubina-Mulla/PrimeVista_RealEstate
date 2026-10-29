@@ -46,7 +46,7 @@ export function PropertyDetail() {
     async function loadProperty() {
       try {
         setLoading(true)
-        const res = await api.get(`/properties/detail/${slug}`)
+        const res = await api.get(`/properties/detail/${slug}`).catch(() => null)
         if (res?.success && res.data) {
           setProperty(res.data)
           setSelectedImage(res.data.coverImage)
@@ -56,10 +56,19 @@ export function PropertyDetail() {
           }))
           return
         }
-      } catch (err) {
+
+        // Fallback resolution if API unavailable or standalone preview
+        const cleanSlug = slug?.trim()
+        const normalizedSlug = cleanSlug?.toLowerCase()
         const fallback = FALLBACK_PROPERTIES.find(
-          (p) => p.slug === slug || p.propertyId === slug?.toUpperCase()
+          (p) =>
+            p._id === cleanSlug ||
+            p.slug === cleanSlug ||
+            p.propertyId?.toLowerCase() === normalizedSlug ||
+            p.propertyId?.replace('-', '').toLowerCase() === normalizedSlug?.replace('-', '') ||
+            p.propertyId?.toLowerCase() === normalizedSlug?.replace('prop-', 'pv-')
         )
+
         if (fallback) {
           setProperty(fallback)
           setSelectedImage(fallback.coverImage)
@@ -67,6 +76,24 @@ export function PropertyDetail() {
             ...prev,
             message: `Hello, I am interested in ${fallback.title} (Property ID: ${fallback.propertyId}). Please contact me with further details or a viewing appointment.`,
           }))
+          return
+        }
+
+        setProperty(null)
+      } catch (err) {
+        const cleanSlug = slug?.trim()
+        const normalizedSlug = cleanSlug?.toLowerCase()
+        const fallback = FALLBACK_PROPERTIES.find(
+          (p) =>
+            p._id === cleanSlug ||
+            p.slug === cleanSlug ||
+            p.propertyId?.toLowerCase() === normalizedSlug ||
+            p.propertyId?.replace('-', '').toLowerCase() === normalizedSlug?.replace('-', '') ||
+            p.propertyId?.toLowerCase() === normalizedSlug?.replace('prop-', 'pv-')
+        )
+        if (fallback) {
+          setProperty(fallback)
+          setSelectedImage(fallback.coverImage)
           return
         }
         showToast(err.message || 'Property not found', 'error')
