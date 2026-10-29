@@ -13,8 +13,6 @@ import {
   AlertCircle,
   RotateCcw,
   MapPin,
-  LayoutGrid,
-  TableProperties,
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
@@ -33,7 +31,6 @@ export function PropertiesAdmin() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [purposeFilter, setPurposeFilter] = useState('all')
-  const [viewMode, setViewMode] = useState('table') // For desktop/tablet view toggle
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editingProperty, setEditingProperty] = useState(null)
@@ -359,36 +356,11 @@ export function PropertiesAdmin() {
           </div>
         </div>
 
-        {/* Inventory Header Bar: Total Count & Desktop View Switcher */}
+        {/* Inventory Header Bar: Total Count */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-500 font-medium">
             Showing <span className="font-bold text-gray-900">{properties.length}</span> properties
           </p>
-
-          <div className="hidden md:flex items-center bg-white border border-gray-200 p-1 rounded-xl shadow-2xs gap-1">
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === 'table'
-                  ? 'bg-[#0F4C3A] text-white shadow-xs'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <TableProperties size={14} />
-              <span>Table</span>
-            </button>
-            <button
-              onClick={() => setViewMode('cards')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === 'cards'
-                  ? 'bg-[#0F4C3A] text-white shadow-xs'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <LayoutGrid size={14} />
-              <span>Cards</span>
-            </button>
-          </div>
         </div>
 
         {/* 1. Mobile Card View: Exclusively shown on mobile screens (< 768px / md:hidden) */}
@@ -417,182 +389,154 @@ export function PropertiesAdmin() {
           )}
         </div>
 
-        {/* 2. Desktop View: Shown on screens >= 768px (hidden md:block) */}
-        <div className="hidden md:block">
-          {viewMode === 'cards' ? (
-            loading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm animate-pulse">
-                    <div className="h-44 bg-gray-200 rounded-xl mb-3" />
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2 mb-4" />
-                    <div className="h-8 bg-gray-200 rounded" />
-                  </div>
-                ))}
-              </div>
-            ) : properties.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm">
-                <Building2 size={44} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-base font-bold text-gray-800">No properties found</p>
-                <p className="text-xs text-gray-400 mt-1">Try adjusting your search or filters.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {properties.map(renderPropertyCard)}
-              </div>
-            )
-          ) : (
-            /* Desktop Table View */
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
-                    <tr>
-                      <th className="py-4 px-5">Property</th>
-                      <th className="py-4 px-4">Ref Code</th>
-                      <th className="py-4 px-4">Category</th>
-                      <th className="py-4 px-4">Price</th>
-                      <th className="py-4 px-4">Locality / City</th>
-                      <th className="py-4 px-4">Publication Status</th>
-                      <th className="py-4 px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {loading ? (
-                      <tr>
-                        <td colSpan="7" className="py-12 text-center text-gray-400">
-                          Loading property database...
-                        </td>
-                      </tr>
-                    ) : properties.length === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="py-12 text-center text-gray-400">
-                          No properties found matching your filter.
-                        </td>
-                      </tr>
-                    ) : (
-                      properties.map((prop) => (
-                        <tr key={prop._id} className="hover:bg-gray-50/80 transition-colors">
-                          {/* Image & Title */}
-                          <td className="py-3 px-5">
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={prop.coverImage}
-                                alt={prop.title}
-                                className="w-12 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
-                              />
-                              <div className="min-w-0 max-w-xs">
-                                <span className="font-bold text-gray-900 block truncate font-['Poppins']">
-                                  {prop.title}
+        {/* 2. Desktop Table View: Standard table layout on desktop (>= 768px / hidden md:block) */}
+        <div className="hidden md:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
+                <tr>
+                  <th className="py-4 px-5">Property</th>
+                  <th className="py-4 px-4">Ref Code</th>
+                  <th className="py-4 px-4">Category</th>
+                  <th className="py-4 px-4">Price</th>
+                  <th className="py-4 px-4">Locality / City</th>
+                  <th className="py-4 px-4">Publication Status</th>
+                  <th className="py-4 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan="7" className="py-12 text-center text-gray-400">
+                      Loading property database...
+                    </td>
+                  </tr>
+                ) : properties.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="py-12 text-center text-gray-400">
+                      No properties found matching your filter.
+                    </td>
+                  </tr>
+                ) : (
+                  properties.map((prop) => (
+                    <tr key={prop._id} className="hover:bg-gray-50/80 transition-colors">
+                      {/* Image & Title */}
+                      <td className="py-3 px-5">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={prop.coverImage}
+                            alt={prop.title}
+                            className="w-12 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
+                          />
+                          <div className="min-w-0 max-w-xs">
+                            <span className="font-bold text-gray-900 block truncate font-['Poppins']">
+                              {prop.title}
+                            </span>
+                            <span className="text-[10px] text-gray-400 flex items-center gap-1">
+                              {prop.purpose === 'Buy' ? 'For Sale' : 'For Rent'} • {prop.area} sq.ft
+                              {prop.featured && (
+                                <span className="inline-flex items-center text-[#F4B740] font-bold">
+                                  ★ Featured
                                 </span>
-                                <span className="text-[10px] text-gray-400 flex items-center gap-1">
-                                  {prop.purpose === 'Buy' ? 'For Sale' : 'For Rent'} • {prop.area} sq.ft
-                                  {prop.featured && (
-                                    <span className="inline-flex items-center text-[#F4B740] font-bold">
-                                      ★ Featured
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Code */}
-                          <td className="py-3 px-4 font-mono font-bold text-[#0F4C3A]">
-                            {prop.propertyId}
-                          </td>
-
-                          {/* Category */}
-                          <td className="py-3 px-4 font-medium text-gray-700">
-                            {prop.category}
-                          </td>
-
-                          {/* Price */}
-                          <td className="py-3 px-4 font-bold text-gray-900 font-['Poppins']">
-                            {formatPrice(prop.price, prop.purpose, prop.rentalPeriod)}
-                          </td>
-
-                          {/* Locality */}
-                          <td className="py-3 px-4 text-gray-600">
-                            {prop.locality}, {prop.city}
-                          </td>
-
-                          {/* Status Dropdown */}
-                          <td className="py-3 px-4">
-                            <select
-                              value={prop.status}
-                              onChange={(e) => handleQuickStatus(prop._id, e.target.value)}
-                              className={`px-2.5 py-1 rounded-full text-[11px] font-bold border capitalize cursor-pointer focus:outline-none ${
-                                PROPERTY_STATUS_COLORS[prop.status] || 'bg-gray-50 text-gray-700 border-gray-200'
-                              }`}
-                            >
-                              <option value="published">Published</option>
-                              <option value="draft">Draft</option>
-                              <option value="sold">Sold</option>
-                              <option value="rented">Rented</option>
-                              <option value="archived">Archived</option>
-                            </select>
-                          </td>
-
-                          {/* Actions */}
-                          <td className="py-3 px-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <Link
-                                to={`/properties/${prop._id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg text-gray-400 hover:text-[#0F4C3A] hover:bg-emerald-50 transition-colors"
-                                title="View Public Listing"
-                              >
-                                <ExternalLink size={16} />
-                              </Link>
-
-                              <button
-                                onClick={() => {
-                                  setEditingProperty(prop)
-                                  setModalOpen(true)
-                                }}
-                                className="p-1.5 rounded-lg text-gray-500 hover:text-[#0F4C3A] hover:bg-emerald-50 transition-colors cursor-pointer"
-                                title="Edit Listing"
-                              >
-                                <Edit size={16} />
-                              </button>
-
-                              {deleteConfirmId === prop._id ? (
-                                <div className="flex items-center gap-1">
-                                  <button
-                                    onClick={() => handleDelete(prop._id)}
-                                    className="px-2 py-1 rounded bg-rose-600 text-white text-[10px] font-bold cursor-pointer"
-                                  >
-                                    Confirm
-                                  </button>
-                                  <button
-                                    onClick={() => setDeleteConfirmId(null)}
-                                    className="px-2 py-1 rounded bg-gray-200 text-gray-700 text-[10px] cursor-pointer"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setDeleteConfirmId(prop._id)}
-                                  className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                                  title="Delete Listing"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
                               )}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Code */}
+                      <td className="py-3 px-4 font-mono font-bold text-[#0F4C3A]">
+                        {prop.propertyId}
+                      </td>
+
+                      {/* Category */}
+                      <td className="py-3 px-4 font-medium text-gray-700">
+                        {prop.category}
+                      </td>
+
+                      {/* Price */}
+                      <td className="py-3 px-4 font-bold text-gray-900 font-['Poppins']">
+                        {formatPrice(prop.price, prop.purpose, prop.rentalPeriod)}
+                      </td>
+
+                      {/* Locality */}
+                      <td className="py-3 px-4 text-gray-600">
+                        {prop.locality}, {prop.city}
+                      </td>
+
+                      {/* Status Dropdown */}
+                      <td className="py-3 px-4">
+                        <select
+                          value={prop.status}
+                          onChange={(e) => handleQuickStatus(prop._id, e.target.value)}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border capitalize cursor-pointer focus:outline-none ${
+                            PROPERTY_STATUS_COLORS[prop.status] || 'bg-gray-50 text-gray-700 border-gray-200'
+                          }`}
+                        >
+                          <option value="published">Published</option>
+                          <option value="draft">Draft</option>
+                          <option value="sold">Sold</option>
+                          <option value="rented">Rented</option>
+                          <option value="archived">Archived</option>
+                        </select>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            to={`/properties/${prop._id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-[#0F4C3A] hover:bg-emerald-50 transition-colors"
+                            title="View Public Listing"
+                          >
+                            <ExternalLink size={16} />
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              setEditingProperty(prop)
+                              setModalOpen(true)
+                            }}
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-[#0F4C3A] hover:bg-emerald-50 transition-colors cursor-pointer"
+                            title="Edit Listing"
+                          >
+                            <Edit size={16} />
+                          </button>
+
+                          {deleteConfirmId === prop._id ? (
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleDelete(prop._id)}
+                                className="px-2 py-1 rounded bg-rose-600 text-white text-[10px] font-bold cursor-pointer"
+                              >
+                                Confirm
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirmId(null)}
+                                className="px-2 py-1 rounded bg-gray-200 text-gray-700 text-[10px] cursor-pointer"
+                              >
+                                Cancel
+                              </button>
                             </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+                          ) : (
+                            <button
+                              onClick={() => setDeleteConfirmId(prop._id)}
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              title="Delete Listing"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
