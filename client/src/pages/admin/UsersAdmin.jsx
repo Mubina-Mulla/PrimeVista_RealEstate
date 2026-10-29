@@ -110,8 +110,77 @@ export function UsersAdmin() {
           </button>
         </div>
 
-        {/* Users Table */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Mobile Staff Cards (< 768px / md:hidden) */}
+        <div className="md:hidden space-y-3">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2].map((n) => (
+                <div key={n} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm animate-pulse space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-3 bg-gray-200 rounded w-2/3" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            users.map((usr) => (
+              <div
+                key={usr._id}
+                className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-bold text-gray-900 font-['Poppins'] text-sm">
+                      {usr.name}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-0.5">{usr.email}</p>
+                  </div>
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      usr.role === 'super_admin'
+                        ? 'bg-emerald-100 text-[#0F4C3A]'
+                        : usr.role === 'admin'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-purple-100 text-purple-800'
+                    }`}
+                  >
+                    {usr.role.replace('_', ' ')}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        usr.active
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-rose-50 text-rose-700 border border-rose-200'
+                      }`}
+                    >
+                      {usr.active ? 'Active' : 'Deactivated'}
+                    </span>
+                    <span className="text-[10px] text-gray-400">
+                      Added: {formatDate(usr.createdAt)}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleToggleStatus(usr._id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      usr.active
+                        ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
+                        : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                    }`}
+                  >
+                    {usr.active ? 'Deactivate' : 'Activate'}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Users Table (>= 768px / hidden md:block) */}
+        <div className="hidden md:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs min-w-[650px]">
               <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
@@ -170,7 +239,7 @@ export function UsersAdmin() {
                       <td className="py-3.5 px-4 text-right">
                         <button
                           onClick={() => handleToggleStatus(usr._id)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                             usr.active
                               ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
                               : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'

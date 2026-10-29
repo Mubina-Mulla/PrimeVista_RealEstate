@@ -156,8 +156,108 @@ export function InquiriesAdmin() {
           </span>
         </div>
 
-        {/* Inquiries Table */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Mobile Card View (< 768px / md:hidden) */}
+        <div className="md:hidden space-y-3">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm animate-pulse space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-3 bg-gray-200 rounded w-2/3" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : inquiries.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
+              <Inbox size={36} className="mx-auto text-gray-300 mb-2" />
+              <p className="text-sm font-semibold text-gray-700">No inquiries found</p>
+              <p className="text-xs text-gray-400 mt-1">No inquiries match this stage.</p>
+            </div>
+          ) : (
+            inquiries.map((inq) => (
+              <div
+                key={inq._id}
+                onClick={() => setSelectedInquiry(inq)}
+                className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-bold text-gray-900 font-['Poppins'] text-sm">
+                      {inq.customerName}
+                    </h4>
+                    <span className="text-[10px] text-gray-400">
+                      Source: {inq.source || 'Website'}
+                    </span>
+                  </div>
+                  <span
+                    className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold border capitalize shrink-0 ${
+                      INQUIRY_STATUS_COLORS[inq.status] || 'bg-gray-50 text-gray-700'
+                    }`}
+                  >
+                    {inq.status}
+                  </span>
+                </div>
+
+                {/* Property Interested */}
+                <div className="bg-[#F5F7F5] rounded-xl p-2.5 text-xs">
+                  <p className="text-[10px] text-gray-400 font-medium">Interested Property</p>
+                  <p className="font-bold text-gray-800 line-clamp-1">{inq.propertyTitle}</p>
+                  {inq.propertyId && (
+                    <span className="font-mono text-[10px] font-bold text-[#0F4C3A]">
+                      Ref: {inq.propertyId}
+                    </span>
+                  )}
+                </div>
+
+                {/* Contact row */}
+                <div className="flex items-center justify-between text-xs text-gray-600 pt-1">
+                  <div className="flex items-center gap-1.5">
+                    <Phone size={13} className="text-[#0F4C3A]" />
+                    <span className="font-medium">{inq.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 truncate max-w-[150px]">
+                    <Mail size={13} className="text-[#0F4C3A] shrink-0" />
+                    <span className="truncate">{inq.email}</span>
+                  </div>
+                </div>
+
+                {/* Agent & Review CTA */}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-2">
+                    {inq.assignedAgent ? (
+                      <>
+                        <img
+                          src={inq.assignedAgent.photo || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=80&q=80'}
+                          alt={inq.assignedAgent.name}
+                          className="w-5 h-5 rounded-full object-cover shrink-0"
+                        />
+                        <span className="text-xs text-gray-700 font-medium truncate max-w-[120px]">
+                          {inq.assignedAgent.name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-amber-600 font-bold text-[10px]">Unassigned</span>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedInquiry(inq)
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-50 text-[#0F4C3A] hover:bg-emerald-100 font-bold text-xs cursor-pointer"
+                  >
+                    Review Lead
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Inquiries Table (>= 768px / hidden md:block) */}
+        <div className="hidden md:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F5F7F5] border-b border-gray-100 text-gray-500 uppercase font-bold tracking-wider">
@@ -265,7 +365,7 @@ export function InquiriesAdmin() {
                             e.stopPropagation()
                             setSelectedInquiry(inq)
                           }}
-                          className="px-3 py-1.5 rounded-lg bg-emerald-50 text-[#0F4C3A] hover:bg-emerald-100 font-bold text-xs"
+                          className="px-3 py-1.5 rounded-lg bg-emerald-50 text-[#0F4C3A] hover:bg-emerald-100 font-bold text-xs cursor-pointer"
                         >
                           Review
                         </button>
