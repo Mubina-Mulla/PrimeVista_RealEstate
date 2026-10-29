@@ -356,12 +356,7 @@ export function PropertiesAdmin() {
           </div>
         </div>
 
-        {/* Inventory Header Bar: Total Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-500 font-medium">
-            Showing <span className="font-bold text-gray-900">{properties.length}</span> properties
-          </p>
-        </div>
+
 
         {/* 1. Mobile Card View: Exclusively shown on mobile screens (< 768px / md:hidden) */}
         <div className="md:hidden">
