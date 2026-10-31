@@ -47,9 +47,9 @@ export function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7F5] flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col w-64 bg-[#0F4C3A] text-white shrink-0 shadow-xl z-20">
+    <div className="h-screen bg-[#F5F7F5] flex overflow-hidden">
+      {/* Desktop Sidebar - Sticky and locked in place */}
+      <aside className="hidden lg:flex lg:flex-col w-64 h-screen sticky top-0 bg-[#0F4C3A] text-white shrink-0 shadow-xl z-20">
         {/* Brand */}
         <div className="p-6 border-b border-emerald-800/60">
           <Link to="/" className="flex items-center gap-3 group">
@@ -189,9 +189,9 @@ export function AdminLayout({ children }) {
       )}
 
       {/* Main Admin Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="bg-white border-b border-gray-100 h-16 flex items-center justify-between px-4 sm:px-8 shrink-0 z-10">
+        <header className="bg-white border-b border-gray-100 h-16 flex items-center justify-between px-4 sm:px-8 shrink-0 z-10 sticky top-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
