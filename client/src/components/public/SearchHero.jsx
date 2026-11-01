@@ -44,7 +44,7 @@ export function SearchHero({ heroData }) {
   return (
     <div className="relative">
       {/* Dark Green Brand Hero Section */}
-      <section className="relative overflow-hidden bg-[#0F4C3A] text-white pt-16 pb-24 md:pt-20 md:pb-28">
+      <section className="relative overflow-hidden bg-[#0F4C3A] text-white pt-10 pb-12 sm:pt-12 sm:pb-14 md:pt-14 md:pb-16">
         {/* Subtle decorative background circles */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-[#F4B740]/10 blur-3xl pointer-events-none" />
@@ -110,12 +110,12 @@ export function SearchHero({ heroData }) {
                   <img
                     src={heroImage}
                     alt="Luxury architectural residence by PrimeVista"
-                    className="w-full h-[280px] sm:h-[380px] lg:h-[440px] object-cover transition-transform duration-700 hover:scale-105"
+                    className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover transition-transform duration-700 hover:scale-105"
                   />
                 </div>
 
                 {/* Floating card indicator */}
-                <div className="absolute -bottom-5 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
+                <div className="absolute -bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
                     <Building2 size={22} />
                   </div>
@@ -131,111 +131,111 @@ export function SearchHero({ heroData }) {
               </div>
             </div>
           </div>
+
+          {/* Interactive Search Filter Box: Directly on the Banner */}
+          <div id="search-bar" className="mt-8 sm:mt-10 lg:mt-12 relative z-20">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 shadow-2xl border border-white/20 text-[#1F2937]">
+              <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
+                {/* Purpose Tabs: Buy vs Rent */}
+                <div className="flex items-center gap-2 pb-1 border-b border-gray-100">
+                  {['Buy', 'Rent'].map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setPurpose(tab)}
+                      className={`flex-1 sm:flex-initial px-6 py-2 rounded-xl text-sm font-bold transition-all text-center cursor-pointer ${
+                        purpose === tab
+                          ? 'bg-[#0F4C3A] text-white shadow-md shadow-[#0F4C3A]/20'
+                          : 'bg-[#F5F7F5] text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                  <span className="text-xs text-gray-400 ml-2 hidden sm:inline">
+                    {purpose === 'Buy' ? 'Browse homes, penthouses & villas for purchase' : 'Browse premium rental residences & offices'}
+                  </span>
+                </div>
+
+                {/* Form Inputs Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                  {/* Location */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                      Location / Locality
+                    </label>
+                    <div className="relative">
+                      <MapPin size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
+                      <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="Indiranagar, Worli, BKC..."
+                        className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white text-gray-800 placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Property Type */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                      Property Type
+                    </label>
+                    <div className="relative">
+                      <Building2 size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
+                      <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white text-gray-800 appearance-none cursor-pointer"
+                      >
+                        <option value="">Any property type</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Office">Commercial Office</option>
+                        <option value="Shop">Retail Shop</option>
+                        <option value="Plot">Villa Plot</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Budget */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                      Budget Range
+                    </label>
+                    <div className="relative">
+                      <IndianRupee size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
+                      <select
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white text-gray-800 appearance-none cursor-pointer"
+                      >
+                        <option value="">Any budget</option>
+                        <option value="under-50l">Under ₹50 Lakhs</option>
+                        <option value="50l-1.5cr">₹50 Lakhs – ₹1.5 Crore</option>
+                        <option value="1.5cr-3cr">₹1.5 Crore – ₹3 Crore</option>
+                        <option value="above-3cr">Above ₹3 Crore</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Search Submit Button */}
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#0F4C3A]/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <Search size={18} className="text-[#F4B740]" />
+                      <span>Search Properties</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </section>
-
-      {/* Overlapping Interactive Search Filter Box */}
-      <div id="search-bar" className="relative z-20 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12">
-        <div className="bg-white rounded-2xl p-4 sm:p-7 shadow-2xl border border-gray-100">
-          <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
-            {/* Purpose Tabs: Buy vs Rent */}
-            <div className="flex items-center gap-2 pb-1 border-b border-gray-100">
-              {['Buy', 'Rent'].map((tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setPurpose(tab)}
-                  className={`flex-1 sm:flex-initial px-6 py-2 rounded-xl text-sm font-bold transition-all text-center ${
-                    purpose === tab
-                      ? 'bg-[#0F4C3A] text-white shadow-md shadow-[#0F4C3A]/20'
-                      : 'bg-[#F5F7F5] text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-              <span className="text-xs text-gray-400 ml-2 hidden sm:inline">
-                {purpose === 'Buy' ? 'Browse homes, penthouses & villas for purchase' : 'Browse premium rental residences & offices'}
-              </span>
-            </div>
-
-            {/* Form Inputs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-              {/* Location */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  Location / Locality
-                </label>
-                <div className="relative">
-                  <MapPin size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Indiranagar, Worli, BKC..."
-                    className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white"
-                  />
-                </div>
-              </div>
-
-              {/* Property Type */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  Property Type
-                </label>
-                <div className="relative">
-                  <Building2 size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white appearance-none cursor-pointer"
-                  >
-                    <option value="">Any property type</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Penthouse">Penthouse</option>
-                    <option value="Office">Commercial Office</option>
-                    <option value="Shop">Retail Shop</option>
-                    <option value="Plot">Villa Plot</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Budget */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  Budget Range
-                </label>
-                <div className="relative">
-                  <IndianRupee size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]" />
-                  <select
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white appearance-none cursor-pointer"
-                  >
-                    <option value="">Any budget</option>
-                    <option value="under-50l">Under ₹50 Lakhs</option>
-                    <option value="50l-1.5cr">₹50 Lakhs – ₹1.5 Crore</option>
-                    <option value="1.5cr-3cr">₹1.5 Crore – ₹3 Crore</option>
-                    <option value="above-3cr">Above ₹3 Crore</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Search Submit Button */}
-              <div>
-                <button
-                  type="submit"
-                  className="w-full py-3.5 px-6 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#0F4C3A]/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
-                >
-                  <Search size={18} className="text-[#F4B740]" />
-                  <span>Search Properties</span>
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
   )
 }
