@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { House, Lock, Mail, ShieldCheck, ArrowRight, UserCheck, KeyRound } from 'lucide-react'
+import { House, Lock, Mail, ShieldCheck, ArrowRight, UserCheck, KeyRound, AlertCircle } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
+import { isValidEmail } from '../../utils/validators.js'
 
 export function Login() {
   const navigate = useNavigate()
@@ -11,12 +12,35 @@ export function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+
+  const validate = () => {
+    const errs = {}
+    if (!email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    if (!password) {
+      errs.password = 'Password is required'
+    } else if (password.length < 6) {
+      errs.password = 'Password must be at least 6 characters'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    if (!validate()) {
+      showToast('Please fix the highlighted login errors', 'error')
+      return
+    }
 
+    setLoading(true)
     try {
       const res = await login(email.trim(), password)
       showToast(`Welcome back, ${res.user.name}!`, 'success')
@@ -30,6 +54,7 @@ export function Login() {
 
   // Quick 1-click test credentials handler
   const setDemoRole = (role) => {
+    setErrors({})
     if (role === 'admin') {
       setEmail('priya@primevista.com')
       setPassword('Password@123')
@@ -75,13 +100,24 @@ export function Login() {
               <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (errors.email) setErrors({ ...errors, email: null })
+                }}
                 placeholder="staff@primevista.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                  errors.email
+                    ? 'border-red-500 ring-1 ring-red-500/20'
+                    : 'border-gray-200 focus:border-[#0F4C3A]'
+                }`}
               />
             </div>
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                <AlertCircle size={13} /> {errors.email}
+              </p>
+            )}
           </div>
 
           <div>
@@ -92,13 +128,24 @@ export function Login() {
               <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
-                required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (errors.password) setErrors({ ...errors, password: null })
+                }}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                  errors.password
+                    ? 'border-red-500 ring-1 ring-red-500/20'
+                    : 'border-gray-200 focus:border-[#0F4C3A]'
+                }`}
               />
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                <AlertCircle size={13} /> {errors.password}
+              </p>
+            )}
           </div>
 
           <button

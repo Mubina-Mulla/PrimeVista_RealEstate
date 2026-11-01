@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Plus,
   Image as ImageIcon,
+  AlertCircle,
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
@@ -42,6 +43,7 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
   const [formData, setFormData] = useState(initialForm)
   const [galleryImages, setGalleryImages] = useState([])
   const [newImageUrl, setNewImageUrl] = useState('')
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -137,13 +139,60 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
   // Set as Cover
   const handleSetAsCover = (url) => {
     setFormData((prev) => ({ ...prev, coverImage: url }))
+    if (errors.coverImage) setErrors((prev) => ({ ...prev, coverImage: null }))
     showToast('Cover image updated', 'success')
+  }
+
+  const validate = () => {
+    const errs = {}
+    if (!formData.title.trim()) {
+      errs.title = 'Title is required'
+    } else if (formData.title.trim().length < 5) {
+      errs.title = 'Title must be at least 5 characters'
+    }
+
+    if (!formData.price || Number(formData.price) <= 0) {
+      errs.price = 'Please enter a valid price greater than 0'
+    }
+
+    if (!formData.locality.trim()) {
+      errs.locality = 'Locality is required'
+    } else if (formData.locality.trim().length < 2) {
+      errs.locality = 'Locality must be at least 2 characters'
+    }
+
+    if (!formData.city.trim()) {
+      errs.city = 'City is required'
+    } else if (formData.city.trim().length < 2) {
+      errs.city = 'City must be at least 2 characters'
+    }
+
+    if (!formData.area || Number(formData.area) <= 0) {
+      errs.area = 'Please enter a valid area (Sq. Ft.) greater than 0'
+    }
+
+    if (!formData.description.trim()) {
+      errs.description = 'Description is required'
+    } else if (formData.description.trim().length < 10) {
+      errs.description = 'Description must be at least 10 characters'
+    }
+
+    if (!formData.coverImage.trim() && galleryImages.length === 0) {
+      errs.coverImage = 'Cover image is required (upload or provide URL)'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    if (!validate()) {
+      showToast('Please fix the highlighted errors before saving', 'error')
+      return
+    }
 
+    setLoading(true)
     try {
       const amenitiesArray = formData.amenities
         .split(',')
@@ -227,12 +276,23 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
                 <label className="block font-bold text-gray-600 mb-1">Property Title *</label>
                 <input
                   type="text"
-                  required
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, title: e.target.value })
+                    if (errors.title) setErrors((prev) => ({ ...prev, title: null }))
+                  }}
                   placeholder="e.g. The Imperial Crest — Luxury 4BHK Sky Villa"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A]"
+                  className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.title
+                      ? 'border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.title && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.title}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -267,13 +327,24 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
                 <label className="block font-bold text-gray-600 mb-1">Price (₹) *</label>
                 <input
                   type="number"
-                  required
                   min="0"
                   value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, price: e.target.value })
+                    if (errors.price) setErrors((prev) => ({ ...prev, price: null }))
+                  }}
                   placeholder="e.g. 25000000"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A]"
+                  className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.price
+                      ? 'border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.price && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.price}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -303,24 +374,46 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
                 <label className="block font-bold text-gray-600 mb-1">Locality *</label>
                 <input
                   type="text"
-                  required
                   value={formData.locality}
-                  onChange={(e) => setFormData({ ...formData, locality: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, locality: e.target.value })
+                    if (errors.locality) setErrors((prev) => ({ ...prev, locality: null }))
+                  }}
                   placeholder="e.g. Indiranagar, Worli"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A]"
+                  className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.locality
+                      ? 'border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.locality && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.locality}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block font-bold text-gray-600 mb-1">City *</label>
                 <input
                   type="text"
-                  required
                   value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, city: e.target.value })
+                    if (errors.city) setErrors((prev) => ({ ...prev, city: null }))
+                  }}
                   placeholder="e.g. Bengaluru, Mumbai"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A]"
+                  className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.city
+                      ? 'border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.city && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.city}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -368,12 +461,23 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
                 <label className="block font-bold text-gray-600 mb-1">Area (Sq. Ft.) *</label>
                 <input
                   type="number"
-                  required
                   min="1"
                   value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, area: e.target.value })
+                    if (errors.area) setErrors((prev) => ({ ...prev, area: null }))
+                  }}
+                  className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.area
+                      ? 'border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.area && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.area}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -405,12 +509,23 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
               <label className="block font-bold text-gray-600 mb-1">Detailed Description *</label>
               <textarea
                 rows={3}
-                required
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, description: e.target.value })
+                  if (errors.description) setErrors((prev) => ({ ...prev, description: null }))
+                }}
                 placeholder="Comprehensive description of the architecture, layout, lighting, and community..."
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none"
+                className={`w-full px-3 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors ${
+                  errors.description
+                    ? 'border-red-500 ring-1 ring-red-500/20'
+                    : 'border-gray-200 focus:border-[#0F4C3A]'
+                }`}
               />
+              {errors.description && (
+                <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                  <AlertCircle size={11} /> {errors.description}
+                </p>
+              )}
             </div>
           </div>
 
@@ -466,12 +581,23 @@ export function PropertyModal({ isOpen, onClose, property, onSaved, agents = [] 
                   <label className="block font-bold text-gray-700 mb-1">Primary Cover Image URL *</label>
                   <input
                     type="text"
-                    required
                     value={formData.coverImage}
-                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, coverImage: e.target.value })
+                      if (errors.coverImage) setErrors((prev) => ({ ...prev, coverImage: null }))
+                    }}
                     placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs focus:outline-none focus:border-[#0F4C3A]"
+                    className={`w-full px-3 py-2 rounded-xl border bg-white text-xs focus:outline-none transition-colors ${
+                      errors.coverImage
+                        ? 'border-red-500 ring-1 ring-red-500/20'
+                        : 'border-gray-300 focus:border-[#0F4C3A]'
+                    }`}
                   />
+                  {errors.coverImage && (
+                    <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle size={11} /> {errors.coverImage}
+                    </p>
+                  )}
                 </div>
               </div>
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Users, Plus, Edit, Trash2, Phone, Mail, Award, X } from 'lucide-react'
+import { Users, Plus, Edit, Trash2, Phone, Mail, Award, X, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FALLBACK_AGENTS } from '../../data/fallbackData.js'
+import { isValidEmail, isValidPhone } from '../../utils/validators.js'
 
 export function AgentsAdmin() {
   const { showToast } = useToast()
@@ -12,6 +13,7 @@ export function AgentsAdmin() {
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingAgent, setEditingAgent] = useState(null)
+  const [errors, setErrors] = useState({})
   const [formData, setFormData] = useState({
     name: '',
     role: 'Senior Property Advisor',
@@ -45,6 +47,7 @@ export function AgentsAdmin() {
   }, [])
 
   const handleOpenModal = (agent = null) => {
+    setErrors({})
     if (agent) {
       setEditingAgent(agent)
       setFormData({
@@ -73,8 +76,41 @@ export function AgentsAdmin() {
     setModalOpen(true)
   }
 
+  const validate = () => {
+    const errs = {}
+    if (!formData.name.trim()) {
+      errs.name = 'Full name is required'
+    } else if (formData.name.trim().length < 3) {
+      errs.name = 'Name must be at least 3 characters'
+    }
+
+    if (!formData.role.trim()) {
+      errs.role = 'Role / Designation is required'
+    }
+
+    if (!formData.phone.trim()) {
+      errs.phone = 'Phone number is required'
+    } else if (!isValidPhone(formData.phone)) {
+      errs.phone = 'Please enter a valid 10-digit phone number'
+    }
+
+    if (!formData.email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(formData.email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!validate()) {
+      showToast('Please fix highlighted errors', 'error')
+      return
+    }
+
     try {
       if (editingAgent) {
         await api.put(`/agents/${editingAgent._id}`, formData)
@@ -235,22 +271,40 @@ export function AgentsAdmin() {
                 <label className="block font-bold text-gray-600 mb-1">Full Name *</label>
                 <input
                   type="text"
-                  required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value })
+                    if (errors.name) setErrors({ ...errors, name: null })
+                  }}
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.name ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.name}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block font-bold text-gray-600 mb-1">Role / Designation *</label>
                 <input
                   type="text"
-                  required
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, role: e.target.value })
+                    if (errors.role) setErrors({ ...errors, role: null })
+                  }}
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.role ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.role && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.role}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -258,11 +312,20 @@ export function AgentsAdmin() {
                   <label className="block font-bold text-gray-600 mb-1">Phone *</label>
                   <input
                     type="tel"
-                    required
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                    onChange={(e) => {
+                      setFormData({ ...formData, phone: e.target.value })
+                      if (errors.phone) setErrors({ ...errors, phone: null })
+                    }}
+                    className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                      errors.phone ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                    }`}
                   />
+                  {errors.phone && (
+                    <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle size={11} /> {errors.phone}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block font-bold text-gray-600 mb-1">Experience</label>
@@ -279,11 +342,20 @@ export function AgentsAdmin() {
                 <label className="block font-bold text-gray-600 mb-1">Email *</label>
                 <input
                   type="email"
-                  required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    if (errors.email) setErrors({ ...errors, email: null })
+                  }}
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.email}
+                  </p>
+                )}
               </div>
 
               <div>

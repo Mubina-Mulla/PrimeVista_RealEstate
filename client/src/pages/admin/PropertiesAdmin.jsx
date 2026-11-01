@@ -36,7 +36,33 @@ export function PropertiesAdmin() {
   const [editingProperty, setEditingProperty] = useState(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
+  const filterFallbackAdmin = () => {
+    let list = [...FALLBACK_PROPERTIES]
+    if (statusFilter !== 'all') {
+      list = list.filter((p) => p.status === statusFilter)
+    }
+    if (categoryFilter !== 'all') {
+      list = list.filter((p) => p.category === categoryFilter)
+    }
+    if (purposeFilter !== 'all') {
+      list = list.filter((p) => p.purpose === purposeFilter)
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase().trim()
+      list = list.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.propertyId?.toLowerCase().includes(q) ||
+          p.locality?.toLowerCase().includes(q) ||
+          p.city?.toLowerCase().includes(q) ||
+          p.address?.toLowerCase().includes(q)
+      )
+    }
+    setProperties(list)
+  }
+
   const loadProperties = async () => {
+    setLoading(true)
     try {
       const query = new URLSearchParams()
       if (search.trim()) query.set('search', search.trim())
@@ -49,14 +75,16 @@ export function PropertiesAdmin() {
         api.get('/agents').catch(() => null),
       ])
 
-      if (propsRes?.success && Array.isArray(propsRes.data) && propsRes.data.length > 0) {
+      if (propsRes?.success && Array.isArray(propsRes.data)) {
         setProperties(propsRes.data)
+      } else {
+        filterFallbackAdmin()
       }
-      if (agentsRes?.success && Array.isArray(agentsRes.data) && agentsRes.data.length > 0) {
+      if (agentsRes?.success && Array.isArray(agentsRes.data)) {
         setAgents(agentsRes.data)
       }
     } catch (err) {
-      console.warn('Backend not reached, showing default property inventory', err)
+      filterFallbackAdmin()
     } finally {
       setLoading(false)
     }

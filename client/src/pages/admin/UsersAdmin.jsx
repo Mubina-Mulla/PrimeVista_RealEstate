@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { UserCheck, Plus, Shield, UserX, CheckCircle2, X } from 'lucide-react'
+import { UserCheck, Plus, Shield, UserX, CheckCircle2, X, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { formatDate } from '../../utils/formatters.js'
 import { FALLBACK_STAFF_USERS } from '../../data/fallbackData.js'
+import { isValidEmail } from '../../utils/validators.js'
 
 export function UsersAdmin() {
   const { showToast } = useToast()
   const [users, setUsers] = useState(FALLBACK_STAFF_USERS)
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [errors, setErrors] = useState({})
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -39,13 +41,43 @@ export function UsersAdmin() {
     loadUsers()
   }, [])
 
+  const validate = () => {
+    const errs = {}
+    if (!formData.name.trim()) {
+      errs.name = 'Full name is required'
+    } else if (formData.name.trim().length < 3) {
+      errs.name = 'Name must be at least 3 characters'
+    }
+
+    if (!formData.email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(formData.email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    if (!formData.password) {
+      errs.password = 'Password is required'
+    } else if (formData.password.length < 6) {
+      errs.password = 'Password must be at least 6 characters'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleCreateUser = async (e) => {
     e.preventDefault()
+    if (!validate()) {
+      showToast('Please fix highlighted errors', 'error')
+      return
+    }
+
     try {
       const res = await api.post('/auth/users', formData)
       if (res.success) {
         showToast('New staff user created!', 'success')
         setModalOpen(false)
+        setErrors({})
         setFormData({ name: '', email: '', password: '', role: 'admin' })
         loadUsers()
       }
@@ -62,6 +94,7 @@ export function UsersAdmin() {
       setUsers((prev) => [newUser, ...prev])
       showToast('Staff user created (Preview mode)', 'success')
       setModalOpen(false)
+      setErrors({})
       setFormData({ name: '', email: '', password: '', role: 'admin' })
     }
   }
@@ -276,37 +309,63 @@ export function UsersAdmin() {
                 <label className="block font-bold text-gray-600 mb-1">Staff Member Name *</label>
                 <input
                   type="text"
-                  required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value })
+                    if (errors.name) setErrors({ ...errors, name: null })
+                  }}
                   placeholder="e.g. Priya Sharma"
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.name ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.name}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block font-bold text-gray-600 mb-1">Official Email Address *</label>
                 <input
                   type="email"
-                  required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    if (errors.email) setErrors({ ...errors, email: null })
+                  }}
                   placeholder="staff@primevista.com"
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.email}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block font-bold text-gray-600 mb-1">Temporary Password *</label>
                 <input
                   type="password"
-                  required
-                  minLength={6}
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value })
+                    if (errors.password) setErrors({ ...errors, password: null })
+                  }}
                   placeholder="Minimum 6 characters"
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none"
+                  className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
+                    errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                  }`}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={11} /> {errors.password}
+                  </p>
+                )}
               </div>
 
               <div>

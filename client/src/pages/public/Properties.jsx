@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Search,
@@ -10,34 +10,132 @@ import {
   ChevronRight,
   MapPin,
   IndianRupee,
+  X,
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { PropertyCard } from '../../components/public/PropertyCard.jsx'
 import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
 
-const PUBLISHED_FALLBACK = FALLBACK_PROPERTIES.filter(p => p.status === 'published' || p.status === 'sold')
+const PUBLISHED_FALLBACK = FALLBACK_PROPERTIES.filter(
+  (p) => p.status === 'published' || p.status === 'sold'
+)
 
 export function Properties() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // State from URL query or defaults
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('location') || searchParams.get('search') || '')
-  const [purpose, setPurpose] = useState(searchParams.get('purpose') || 'all')
-  const [category, setCategory] = useState(searchParams.get('category') || 'all')
-  const [bedrooms, setBedrooms] = useState(searchParams.get('bedrooms') || 'Any')
-  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '')
-  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '')
-  const [sort, setSort] = useState(searchParams.get('sort') || 'newest')
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10))
+  const [searchTerm, setSearchTerm] = useState(
+    () => searchParams.get('location') || searchParams.get('search') || ''
+  )
+  const [purpose, setPurpose] = useState(() => searchParams.get('purpose') || 'all')
+  const [category, setCategory] = useState(() => searchParams.get('category') || 'all')
+  const [bedrooms, setBedrooms] = useState(() => searchParams.get('bedrooms') || 'Any')
+  const [minPrice, setMinPrice] = useState(() => searchParams.get('minPrice') || '')
+  const [maxPrice, setMaxPrice] = useState(() => searchParams.get('maxPrice') || '')
+  const [sort, setSort] = useState(() => searchParams.get('sort') || 'newest')
+  const [page, setPage] = useState(() => parseInt(searchParams.get('page') || '1', 10))
 
   const [properties, setProperties] = useState(PUBLISHED_FALLBACK)
-  const [pagination, setPagination] = useState({ total: PUBLISHED_FALLBACK.length, totalPages: 1, page: 1 })
+  const [pagination, setPagination] = useState({
+    total: PUBLISHED_FALLBACK.length,
+    totalPages: 1,
+    page: 1,
+  })
   const [loading, setLoading] = useState(false)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
 
-  // Fetch properties from live MongoDB API
+  // Sync state when URL query params change (e.g. from Hero Search Bar or external links)
   useEffect(() => {
+    const loc = searchParams.get('location') || searchParams.get('search') || ''
+    const pur = searchParams.get('purpose') || 'all'
+    const cat = searchParams.get('category') || 'all'
+    const bed = searchParams.get('bedrooms') || 'Any'
+    const minP = searchParams.get('minPrice') || ''
+    const maxP = searchParams.get('maxPrice') || ''
+    const s = searchParams.get('sort') || 'newest'
+    const pg = parseInt(searchParams.get('page') || '1', 10)
+
+    setSearchTerm((prev) => (prev !== loc ? loc : prev))
+    setPurpose((prev) => (prev !== pur ? pur : prev))
+    setCategory((prev) => (prev !== cat ? cat : prev))
+    setBedrooms((prev) => (prev !== bed ? bed : prev))
+    setMinPrice((prev) => (prev !== minP ? minP : prev))
+    setMaxPrice((prev) => (prev !== maxP ? maxP : prev))
+    setSort((prev) => (prev !== s ? s : prev))
+    setPage((prev) => (prev !== pg ? pg : prev))
+  }, [searchParams])
+
+  // Local fallback filter helper
+  const filterFallbackData = useCallback(() => {
+    let filtered = [...PUBLISHED_FALLBACK]
+
+    // Purpose filter
+    if (purpose && purpose !== 'all' && purpose !== 'Any') {
+      if (purpose === 'Buy') {
+        filtered = filtered.filter((p) => p.purpose === 'Buy' || p.purpose === 'For Sale')
+      } else if (purpose === 'Rent') {
+        filtered = filtered.filter((p) => p.purpose === 'Rent' || p.purpose === 'For Rent')
+      } else {
+        filtered = filtered.filter((p) => p.purpose === purpose)
+      }
+    }
+
+    // Category filter
+    if (category && category !== 'all' && category !== 'Any property') {
+      filtered = filtered.filter((p) => p.category?.toLowerCase() === category.toLowerCase())
+    }
+
+    // Bedrooms filter
+    if (bedrooms && bedrooms !== 'Any') {
+      const b = parseInt(bedrooms, 10)
+      if (!isNaN(b)) {
+        filtered = filtered.filter((p) => (b >= 4 ? (p.bedrooms || 0) >= 4 : p.bedrooms === b))
+      }
+    }
+
+    // Price range filters
+    if (minPrice && !isNaN(Number(minPrice))) {
+      filtered = filtered.filter((p) => Number(p.price) >= Number(minPrice))
+    }
+    if (maxPrice && !isNaN(Number(maxPrice))) {
+      filtered = filtered.filter((p) => Number(p.price) <= Number(maxPrice))
+    }
+
+    // Search term (across title, locality, city, address, propertyId, category)
+    if (searchTerm.trim()) {
+      const s = searchTerm.toLowerCase().trim()
+      filtered = filtered.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(s) ||
+          p.locality?.toLowerCase().includes(s) ||
+          p.city?.toLowerCase().includes(s) ||
+          p.address?.toLowerCase().includes(s) ||
+          p.propertyId?.toLowerCase().includes(s) ||
+          p.category?.toLowerCase().includes(s)
+      )
+    }
+
+    // Sorting
+    if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price)
+    else if (sort === 'price-desc') filtered.sort((a, b) => b.price - a.price)
+    else if (sort === 'featured') filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+
+    const limit = 9
+    const total = filtered.length
+    const totalPages = Math.max(1, Math.ceil(total / limit))
+    const start = (Math.max(1, page) - 1) * limit
+    const paged = filtered.slice(start, start + limit)
+
+    setProperties(paged)
+    setPagination({ total, totalPages, page })
+  }, [searchTerm, purpose, category, bedrooms, minPrice, maxPrice, sort, page])
+
+  // Fetch properties from live MongoDB API with instant fallback
+  useEffect(() => {
+    let isCurrent = true
+
     async function fetchProperties() {
+      setLoading(true)
       try {
         const query = new URLSearchParams()
         if (searchTerm.trim()) query.set('location', searchTerm.trim())
@@ -51,27 +149,34 @@ export function Properties() {
         query.set('limit', '9')
 
         const res = await api.get(`/properties?${query.toString()}`)
-        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (!isCurrent) return
+
+        if (res?.success && Array.isArray(res.data)) {
           setProperties(res.data)
-          setPagination(res.pagination || { total: res.data.length, totalPages: 1, page: 1 })
+          setPagination(
+            res.pagination || {
+              total: res.data.length,
+              totalPages: Math.max(1, Math.ceil(res.data.length / 9)),
+              page,
+            }
+          )
+        } else {
+          filterFallbackData()
         }
       } catch (err) {
-        let filtered = PUBLISHED_FALLBACK
-        if (purpose !== 'all') filtered = filtered.filter(p => p.purpose === purpose)
-        if (category !== 'all') filtered = filtered.filter(p => p.category === category)
-        if (searchTerm.trim()) {
-          const s = searchTerm.toLowerCase()
-          filtered = filtered.filter(p => p.title.toLowerCase().includes(s) || p.locality.toLowerCase().includes(s) || p.city.toLowerCase().includes(s))
-        }
-        setProperties(filtered)
-        setPagination({ total: filtered.length, totalPages: 1, page: 1 })
+        if (!isCurrent) return
+        filterFallbackData()
       } finally {
-        setLoading(false)
+        if (isCurrent) setLoading(false)
       }
     }
 
     fetchProperties()
-  }, [searchTerm, purpose, category, bedrooms, minPrice, maxPrice, sort, page])
+
+    return () => {
+      isCurrent = false
+    }
+  }, [searchTerm, purpose, category, bedrooms, minPrice, maxPrice, sort, page, filterFallbackData])
 
   const handleResetFilters = () => {
     setSearchTerm('')
@@ -83,6 +188,20 @@ export function Properties() {
     setSort('newest')
     setPage(1)
     setSearchParams({})
+  }
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault()
+    setPage(1)
+    const params = new URLSearchParams()
+    if (searchTerm.trim()) params.set('location', searchTerm.trim())
+    if (purpose && purpose !== 'all') params.set('purpose', purpose)
+    if (category && category !== 'all') params.set('category', category)
+    if (bedrooms && bedrooms !== 'Any') params.set('bedrooms', bedrooms)
+    if (minPrice) params.set('minPrice', minPrice)
+    if (maxPrice) params.set('maxPrice', maxPrice)
+    if (sort) params.set('sort', sort)
+    setSearchParams(params)
   }
 
   return (
@@ -104,9 +223,12 @@ export function Properties() {
         {/* Filter Controls Bar */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search Input */}
-            <div className="relative w-full md:max-w-md">
-              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            {/* Search Input Form */}
+            <form onSubmit={handleSearchSubmit} className="relative w-full md:max-w-md">
+              <Search
+                size={18}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0F4C3A]"
+              />
               <input
                 type="text"
                 value={searchTerm}
@@ -115,9 +237,22 @@ export function Properties() {
                   setPage(1)
                 }}
                 placeholder="Search by title, locality, city, or ID (e.g. PV-101)..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white"
               />
-            </div>
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('')
+                    setPage(1)
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </form>
 
             {/* Purpose & Sort Controls */}
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">

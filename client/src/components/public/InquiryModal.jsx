@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { X, Calendar, Clock, Send, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { X, Calendar, Clock, Send, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
+import { isValidEmail, isValidPhone } from '../../utils/validators.js'
 
 export function InquiryModal({ isOpen, onClose, property }) {
   const { showToast } = useToast()
@@ -14,15 +15,48 @@ export function InquiryModal({ isOpen, onClose, property }) {
     preferredDate: '',
     preferredTime: 'Morning (10:00 AM - 1:00 PM)',
   })
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
   if (!isOpen) return null
 
+  const validate = () => {
+    const errs = {}
+    if (!formData.customerName.trim()) {
+      errs.customerName = 'Full name is required'
+    } else if (formData.customerName.trim().length < 3) {
+      errs.customerName = 'Full name must be at least 3 characters'
+    }
+
+    if (!formData.phone.trim()) {
+      errs.phone = 'Phone number is required'
+    } else if (!isValidPhone(formData.phone)) {
+      errs.phone = 'Please enter a valid 10-digit phone number'
+    }
+
+    if (!formData.email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(formData.email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    if (formData.inquiryType === 'site_visit' && !formData.preferredDate) {
+      errs.preferredDate = 'Please select a preferred visit date'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    if (!validate()) {
+      showToast('Please correct the highlighted form errors', 'error')
+      return
+    }
 
+    setLoading(true)
     try {
       const payload = {
         customerName: formData.customerName.trim(),
@@ -38,6 +72,7 @@ export function InquiryModal({ isOpen, onClose, property }) {
       const res = await api.post('/inquiries', payload)
       if (res.success) {
         setSubmitted(true)
+        setErrors({})
         showToast('Inquiry submitted! Our property specialist will contact you shortly.', 'success')
       }
     } catch (err) {
@@ -125,12 +160,23 @@ export function InquiryModal({ isOpen, onClose, property }) {
                 </label>
                 <input
                   type="text"
-                  required
                   value={formData.customerName}
-                  onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, customerName: e.target.value })
+                    if (errors.customerName) setErrors({ ...errors, customerName: null })
+                  }}
                   placeholder="e.g. Ramesh Patel"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A]"
+                  className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
+                    errors.customerName
+                      ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                      : 'border-gray-200 focus:border-[#0F4C3A]'
+                  }`}
                 />
+                {errors.customerName && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                    <AlertCircle size={12} /> {errors.customerName}
+                  </p>
+                )}
               </div>
 
               {/* Phone & Email */}
@@ -141,12 +187,23 @@ export function InquiryModal({ isOpen, onClose, property }) {
                   </label>
                   <input
                     type="tel"
-                    required
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, phone: e.target.value })
+                      if (errors.phone) setErrors({ ...errors, phone: null })
+                    }}
                     placeholder="+91 98765 43210"
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A]"
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
+                      errors.phone
+                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                        : 'border-gray-200 focus:border-[#0F4C3A]'
+                    }`}
                   />
+                  {errors.phone && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle size={12} /> {errors.phone}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
@@ -154,12 +211,23 @@ export function InquiryModal({ isOpen, onClose, property }) {
                   </label>
                   <input
                     type="email"
-                    required
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value })
+                      if (errors.email) setErrors({ ...errors, email: null })
+                    }}
                     placeholder="name@example.com"
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A]"
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
+                      errors.email
+                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                        : 'border-gray-200 focus:border-[#0F4C3A]'
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle size={12} /> {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -168,15 +236,25 @@ export function InquiryModal({ isOpen, onClose, property }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-emerald-50/50 rounded-xl border border-emerald-100">
                   <div>
                     <label className="block text-xs font-bold text-[#0F4C3A] mb-1 flex items-center gap-1">
-                      <Calendar size={14} /> Preferred Date
+                      <Calendar size={14} /> Preferred Date *
                     </label>
                     <input
                       type="date"
                       min={new Date().toISOString().split('T')[0]}
                       value={formData.preferredDate}
-                      onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-emerald-200 bg-white text-xs focus:outline-none"
+                      onChange={(e) => {
+                        setFormData({ ...formData, preferredDate: e.target.value })
+                        if (errors.preferredDate) setErrors({ ...errors, preferredDate: null })
+                      }}
+                      className={`w-full px-3 py-2 rounded-lg border bg-white text-xs focus:outline-none ${
+                        errors.preferredDate ? 'border-red-500 ring-1 ring-red-500/20' : 'border-emerald-200'
+                      }`}
                     />
+                    {errors.preferredDate && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {errors.preferredDate}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#0F4C3A] mb-1 flex items-center gap-1">

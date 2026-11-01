@@ -12,9 +12,14 @@ export function SearchHero({ heroData }) {
   const handleSearch = (e) => {
     e.preventDefault()
     const params = new URLSearchParams()
-    if (purpose) params.set('purpose', purpose)
-    if (location.trim()) params.set('location', location.trim())
-    if (category && category !== 'Any property') params.set('category', category)
+    if (purpose && purpose !== 'all') params.set('purpose', purpose)
+    if (location.trim()) {
+      params.set('location', location.trim())
+      params.set('search', location.trim())
+    }
+    if (category && category !== 'all' && category !== 'Any property' && category !== '') {
+      params.set('category', category)
+    }
     if (budget && budget !== 'Any budget') {
       if (budget === 'under-50l') params.set('maxPrice', '5000000')
       if (budget === '50l-1.5cr') {
@@ -28,7 +33,8 @@ export function SearchHero({ heroData }) {
       if (budget === 'above-3cr') params.set('minPrice', '30000000')
     }
 
-    navigate(`/properties?${params.toString()}`)
+    const queryString = params.toString()
+    navigate(queryString ? `/properties?${queryString}` : '/properties')
   }
 
   const badgeText = heroData?.heroBadge || 'Find a place to call home'

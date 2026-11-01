@@ -17,10 +17,12 @@ import {
   Clock,
   Send,
   Building2,
+  AlertCircle,
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { formatPrice } from '../../utils/formatters.js'
 import { useToast } from '../../context/ToastContext.jsx'
+import { isValidEmail, isValidPhone } from '../../utils/validators.js'
 
 import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
 
@@ -39,6 +41,7 @@ export function PropertyDetail() {
     preferredDate: '',
     preferredTime: 'Morning (10:00 AM - 1:00 PM)',
   })
+  const [inquiryErrors, setInquiryErrors] = useState({})
   const [submittingInquiry, setSubmittingInquiry] = useState(false)
   const [inquirySuccess, setInquirySuccess] = useState(false)
 
@@ -105,10 +108,38 @@ export function PropertyDetail() {
     if (slug) loadProperty()
   }, [slug])
 
+  const validateInquiry = () => {
+    const errs = {}
+    if (!inquiryData.customerName.trim()) {
+      errs.customerName = 'Your name is required'
+    } else if (inquiryData.customerName.trim().length < 3) {
+      errs.customerName = 'Name must be at least 3 characters'
+    }
+
+    if (!inquiryData.phone.trim()) {
+      errs.phone = 'Phone number is required'
+    } else if (!isValidPhone(inquiryData.phone)) {
+      errs.phone = 'Please enter a valid 10-digit phone number'
+    }
+
+    if (!inquiryData.email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(inquiryData.email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    setInquiryErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleInquirySubmit = async (e) => {
     e.preventDefault()
-    setSubmittingInquiry(true)
+    if (!validateInquiry()) {
+      showToast('Please fix highlighted errors before submitting', 'error')
+      return
+    }
 
+    setSubmittingInquiry(true)
     try {
       const payload = {
         customerName: inquiryData.customerName.trim(),
@@ -124,6 +155,7 @@ export function PropertyDetail() {
       const res = await api.post('/inquiries', payload)
       if (res.success) {
         setInquirySuccess(true)
+        setInquiryErrors({})
         showToast('Your inquiry has been submitted! Our assigned agent will reach out shortly.', 'success')
       }
     } catch (err) {
@@ -467,12 +499,23 @@ export function PropertyDetail() {
                     </label>
                     <input
                       type="text"
-                      required
                       placeholder="e.g. Priya Sharma"
                       value={inquiryData.customerName}
-                      onChange={(e) => setInquiryData({ ...inquiryData, customerName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A] bg-white"
+                      onChange={(e) => {
+                        setInquiryData({ ...inquiryData, customerName: e.target.value })
+                        if (inquiryErrors.customerName) setInquiryErrors({ ...inquiryErrors, customerName: null })
+                      }}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
+                        inquiryErrors.customerName
+                          ? 'border-red-500 ring-1 ring-red-500/20'
+                          : 'border-gray-200 focus:border-[#0F4C3A]'
+                      }`}
                     />
+                    {inquiryErrors.customerName && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {inquiryErrors.customerName}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -481,12 +524,23 @@ export function PropertyDetail() {
                     </label>
                     <input
                       type="tel"
-                      required
                       placeholder="+91 98765 43210"
                       value={inquiryData.phone}
-                      onChange={(e) => setInquiryData({ ...inquiryData, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A] bg-white"
+                      onChange={(e) => {
+                        setInquiryData({ ...inquiryData, phone: e.target.value })
+                        if (inquiryErrors.phone) setInquiryErrors({ ...inquiryErrors, phone: null })
+                      }}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
+                        inquiryErrors.phone
+                          ? 'border-red-500 ring-1 ring-red-500/20'
+                          : 'border-gray-200 focus:border-[#0F4C3A]'
+                      }`}
                     />
+                    {inquiryErrors.phone && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {inquiryErrors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -495,12 +549,23 @@ export function PropertyDetail() {
                     </label>
                     <input
                       type="email"
-                      required
                       placeholder="priya@example.com"
                       value={inquiryData.email}
-                      onChange={(e) => setInquiryData({ ...inquiryData, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#0F4C3A] bg-white"
+                      onChange={(e) => {
+                        setInquiryData({ ...inquiryData, email: e.target.value })
+                        if (inquiryErrors.email) setInquiryErrors({ ...inquiryErrors, email: null })
+                      }}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
+                        inquiryErrors.email
+                          ? 'border-red-500 ring-1 ring-red-500/20'
+                          : 'border-gray-200 focus:border-[#0F4C3A]'
+                      }`}
                     />
+                    {inquiryErrors.email && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {inquiryErrors.email}
+                      </p>
+                    )}
                   </div>
 
                   {/* Visit Date & Time */}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
+import { isValidEmail, isValidPhone } from '../../utils/validators.js'
 
 export function Contact() {
   const { showToast } = useToast()
@@ -11,13 +12,48 @@ export function Contact() {
     email: '',
     message: '',
   })
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
+  const validate = () => {
+    const errs = {}
+    if (!formData.customerName.trim()) {
+      errs.customerName = 'Full name is required'
+    } else if (formData.customerName.trim().length < 3) {
+      errs.customerName = 'Full name must be at least 3 characters'
+    }
+
+    if (!formData.phone.trim()) {
+      errs.phone = 'Phone number is required'
+    } else if (!isValidPhone(formData.phone)) {
+      errs.phone = 'Please enter a valid 10-digit phone number'
+    }
+
+    if (!formData.email.trim()) {
+      errs.email = 'Email address is required'
+    } else if (!isValidEmail(formData.email)) {
+      errs.email = 'Please enter a valid email address'
+    }
+
+    if (!formData.message.trim()) {
+      errs.message = 'Inquiry message is required'
+    } else if (formData.message.trim().length < 10) {
+      errs.message = 'Message must be at least 10 characters'
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
+    if (!validate()) {
+      showToast('Please fix the highlighted validation errors', 'error')
+      return
+    }
 
+    setLoading(true)
     try {
       const res = await api.post('/inquiries', {
         customerName: formData.customerName.trim(),
@@ -29,6 +65,7 @@ export function Contact() {
 
       if (res.success) {
         setSubmitted(true)
+        setErrors({})
         showToast('Thank you! Your message has been received.', 'success')
       }
     } catch (err) {
@@ -165,12 +202,23 @@ export function Contact() {
                   </label>
                   <input
                     type="text"
-                    required
                     placeholder="e.g. Vikram Malhotra"
                     value={formData.customerName}
-                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                    onChange={(e) => {
+                      setFormData({ ...formData, customerName: e.target.value })
+                      if (errors.customerName) setErrors({ ...errors, customerName: null })
+                    }}
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                      errors.customerName
+                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                        : 'border-gray-200 focus:border-[#0F4C3A]'
+                    }`}
                   />
+                  {errors.customerName && (
+                    <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                      <AlertCircle size={13} /> {errors.customerName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -180,12 +228,23 @@ export function Contact() {
                     </label>
                     <input
                       type="tel"
-                      required
                       placeholder="+91 98765 43210"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                      onChange={(e) => {
+                        setFormData({ ...formData, phone: e.target.value })
+                        if (errors.phone) setErrors({ ...errors, phone: null })
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                        errors.phone
+                          ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                          : 'border-gray-200 focus:border-[#0F4C3A]'
+                      }`}
                     />
+                    {errors.phone && (
+                      <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.phone}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
@@ -193,12 +252,23 @@ export function Contact() {
                     </label>
                     <input
                       type="email"
-                      required
                       placeholder="vikram@example.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value })
+                        if (errors.email) setErrors({ ...errors, email: null })
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                        errors.email
+                          ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                          : 'border-gray-200 focus:border-[#0F4C3A]'
+                      }`}
                     />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -208,12 +278,23 @@ export function Contact() {
                   </label>
                   <textarea
                     rows={4}
-                    required
                     placeholder="Provide details about your preferred location, budget, property type, or specific question..."
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] bg-white"
+                    onChange={(e) => {
+                      setFormData({ ...formData, message: e.target.value })
+                      if (errors.message) setErrors({ ...errors, message: null })
+                    }}
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
+                      errors.message
+                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
+                        : 'border-gray-200 focus:border-[#0F4C3A]'
+                    }`}
                   />
+                  {errors.message && (
+                    <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                      <AlertCircle size={13} /> {errors.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 text-xs text-gray-500">

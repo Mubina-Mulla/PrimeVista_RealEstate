@@ -29,7 +29,27 @@ export function InquiriesAdmin() {
   const [search, setSearch] = useState('')
   const [selectedInquiry, setSelectedInquiry] = useState(null)
 
+  const filterFallbackInquiries = () => {
+    let list = [...FALLBACK_INQUIRIES]
+    if (statusFilter !== 'all') {
+      list = list.filter((i) => i.status === statusFilter)
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase().trim()
+      list = list.filter(
+        (i) =>
+          i.customerName?.toLowerCase().includes(q) ||
+          i.email?.toLowerCase().includes(q) ||
+          i.phone?.toLowerCase().includes(q) ||
+          i.propertyTitle?.toLowerCase().includes(q) ||
+          i.message?.toLowerCase().includes(q)
+      )
+    }
+    setInquiries(list)
+  }
+
   const loadInquiries = async () => {
+    setLoading(true)
     try {
       const query = new URLSearchParams()
       if (statusFilter !== 'all') query.set('status', statusFilter)
@@ -40,14 +60,16 @@ export function InquiriesAdmin() {
         api.get('/agents').catch(() => null),
       ])
 
-      if (inqRes?.success && Array.isArray(inqRes.data) && inqRes.data.length > 0) {
+      if (inqRes?.success && Array.isArray(inqRes.data)) {
         setInquiries(inqRes.data)
+      } else {
+        filterFallbackInquiries()
       }
-      if (agentsRes?.success && Array.isArray(agentsRes.data) && agentsRes.data.length > 0) {
+      if (agentsRes?.success && Array.isArray(agentsRes.data)) {
         setAgents(agentsRes.data)
       }
     } catch (err) {
-      console.warn('Backend not reached, showing default customer inquiries', err)
+      filterFallbackInquiries()
     } finally {
       setLoading(false)
     }
