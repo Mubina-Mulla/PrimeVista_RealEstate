@@ -44,96 +44,14 @@ export function SearchHero({ heroData }) {
   return (
     <div className="relative">
       {/* Dark Green Brand Hero Section */}
-      <section className="relative overflow-hidden bg-[#0F4C3A] text-white pt-10 pb-12 sm:pt-12 sm:pb-14 md:pt-14 md:pb-16">
+      <section className="relative overflow-hidden bg-[#0F4C3A] text-white pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20">
         {/* Subtle decorative background circles */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-[#F4B740]/10 blur-3xl pointer-events-none" />
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Pill badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm font-medium backdrop-blur-sm">
-                <span className="w-2 h-2 rounded-full bg-[#F4B740] animate-pulse" />
-                <span>{badgeText}</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15]">
-                {titleText}{' '}
-                <span className="block text-[#F4B740] mt-1 drop-shadow-xs">
-                  {highlightText}
-                </span>
-              </h1>
-
-              {/* Description */}
-              <p className="max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 leading-relaxed font-normal">
-                {descriptionText}
-              </p>
-
-              {/* Quick Action buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                <a
-                  href="#search-bar"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all transform hover:-translate-y-0.5 text-center"
-                >
-                  <span>Explore Properties</span>
-                  <ArrowRight size={18} />
-                </a>
-
-                <button
-                  onClick={() => navigate('/contact')}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base backdrop-blur-sm transition-all text-center"
-                >
-                  Contact Our Team
-                </button>
-              </div>
-
-              {/* Trust Metrics pill */}
-              <div className="pt-4 flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-emerald-200/80">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-[#F4B740] shrink-0" />
-                  <span>Verified Legal Clearances</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sparkles size={18} className="text-[#F4B740] shrink-0" />
-                  <span>Curated Luxury Architecture</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Hero Image Card */}
-            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                <div className="overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl bg-emerald-950/40">
-                  <img
-                    src={heroImage}
-                    alt="Luxury architectural residence by PrimeVista"
-                    className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover transition-transform duration-700 hover:scale-105"
-                  />
-                </div>
-
-                {/* Floating card indicator */}
-                <div className="absolute -bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
-                    <Building2 size={22} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                      Verified Portfolio
-                    </p>
-                    <p className="text-xs sm:text-sm font-bold text-[#0F4C3A] leading-tight">
-                      Better Spaces for Your Future
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Search Filter Box: Directly on the Banner */}
-          <div id="search-bar" className="mt-8 sm:mt-10 lg:mt-12 relative z-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 sm:space-y-10 lg:space-y-12">
+          {/* Interactive Search Filter Box: Directly after Navbar on Banner */}
+          <div id="search-bar" className="relative z-20">
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 shadow-2xl border border-white/20 text-[#1F2937]">
               <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
                 {/* Purpose Tabs: Buy vs Rent */}
@@ -232,6 +150,91 @@ export function SearchHero({ heroData }) {
                   </div>
                 </div>
               </form>
+            </div>
+          </div>
+
+          {/* Main Hero Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Pill badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm font-medium backdrop-blur-sm">
+                <span className="w-2 h-2 rounded-full bg-[#F4B740] animate-pulse" />
+                <span>{badgeText}</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15]">
+                {titleText}{' '}
+                <span className="block text-[#F4B740] mt-1 drop-shadow-xs">
+                  {highlightText}
+                </span>
+              </h1>
+
+              {/* Description */}
+              <p className="max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 leading-relaxed font-normal">
+                {descriptionText}
+              </p>
+
+              {/* Quick Action buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                <button
+                  type="button"
+                  onClick={() => navigate('/properties')}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all transform hover:-translate-y-0.5 text-center cursor-pointer"
+                >
+                  <span>Explore Properties</span>
+                  <ArrowRight size={18} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('/contact')}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base backdrop-blur-sm transition-all text-center cursor-pointer"
+                >
+                  Contact Our Team
+                </button>
+              </div>
+
+              {/* Trust Metrics pill */}
+              <div className="pt-4 flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-emerald-200/80">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={18} className="text-[#F4B740] shrink-0" />
+                  <span>Verified Legal Clearances</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={18} className="text-[#F4B740] shrink-0" />
+                  <span>Curated Luxury Architecture</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Hero Image Card */}
+            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                <div className="overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl bg-emerald-950/40">
+                  <img
+                    src={heroImage}
+                    alt="Luxury architectural residence by PrimeVista"
+                    className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                </div>
+
+                {/* Floating card indicator */}
+                <div className="absolute -bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
+                    <Building2 size={22} />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                      Verified Portfolio
+                    </p>
+                    <p className="text-xs sm:text-sm font-bold text-[#0F4C3A] leading-tight">
+                      Better Spaces for Your Future
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
