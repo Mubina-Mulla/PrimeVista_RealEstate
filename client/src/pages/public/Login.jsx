@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { House, Lock, Mail, ShieldCheck, ArrowRight, UserCheck, KeyRound, AlertCircle } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
-import { isValidEmail } from '../../utils/validators.js'
+import { validateEmail } from '../../utils/validators.js'
 
 export function Login() {
   const navigate = useNavigate()
@@ -15,19 +15,34 @@ export function Login() {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
+  const validateField = (field, value) => {
+    if (field === 'email') return validateEmail(value, 'Email address')
+    if (field === 'password') {
+      if (!value) return 'Password is required'
+      if (value.length < 6) return 'Password must be at least 6 characters'
+      return null
+    }
+    return null
+  }
+
+  const handleBlur = (field) => {
+    const errorMsg = validateField(field, field === 'email' ? email : password)
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validate = () => {
-    const errs = {}
-    if (!email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(email)) {
-      errs.email = 'Please enter a valid email address'
+    const errs = {
+      email: validateEmail(email, 'Email address'),
+      password: !password
+        ? 'Password is required'
+        : password.length < 6
+        ? 'Password must be at least 6 characters'
+        : null,
     }
 
-    if (!password) {
-      errs.password = 'Password is required'
-    } else if (password.length < 6) {
-      errs.password = 'Password must be at least 6 characters'
-    }
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -102,9 +117,13 @@ export function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => {
-                  setEmail(e.target.value)
-                  if (errors.email) setErrors({ ...errors, email: null })
+                  const val = e.target.value
+                  setEmail(val)
+                  if (errors.email) {
+                    setErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                  }
                 }}
+                onBlur={() => handleBlur('email')}
                 placeholder="staff@primevista.com"
                 className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                   errors.email
@@ -130,9 +149,13 @@ export function Login() {
                 type="password"
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value)
-                  if (errors.password) setErrors({ ...errors, password: null })
+                  const val = e.target.value
+                  setPassword(val)
+                  if (errors.password) {
+                    setErrors((prev) => ({ ...prev, password: validateField('password', val) }))
+                  }
                 }}
+                onBlur={() => handleBlur('password')}
                 placeholder="••••••••"
                 className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                   errors.password

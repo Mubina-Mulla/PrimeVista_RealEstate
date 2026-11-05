@@ -10,7 +10,13 @@ export const loginSchema = z.object({
 })
 
 export const createUserSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .refine((val) => !/\d/.test(val), { message: 'Name cannot contain numbers' })
+    .refine((val) => /^[a-zA-Z\s.'’-]+$/.test(val.trim()), {
+      message: 'Name can only contain letters, spaces, and hyphens',
+    }),
   email: z.string().email('Valid email is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role: z.enum(['super_admin', 'admin', 'agent']).default('admin'),

@@ -22,7 +22,11 @@ import {
 import { api } from '../../api/client.js'
 import { formatPrice } from '../../utils/formatters.js'
 import { useToast } from '../../context/ToastContext.jsx'
-import { isValidEmail, isValidPhone } from '../../utils/validators.js'
+import {
+  validateName,
+  validatePhone,
+  validateEmail,
+} from '../../utils/validators.js'
 
 import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
 
@@ -108,25 +112,28 @@ export function PropertyDetail() {
     if (slug) loadProperty()
   }, [slug])
 
+  const validateField = (field, value) => {
+    if (field === 'customerName') return validateName(value, 'Your name')
+    if (field === 'phone') return validatePhone(value, 'Phone number')
+    if (field === 'email') return validateEmail(value, 'Email address')
+    return null
+  }
+
+  const handleBlurInquiry = (field) => {
+    const errorMsg = validateField(field, inquiryData[field])
+    setInquiryErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validateInquiry = () => {
-    const errs = {}
-    if (!inquiryData.customerName.trim()) {
-      errs.customerName = 'Your name is required'
-    } else if (inquiryData.customerName.trim().length < 3) {
-      errs.customerName = 'Name must be at least 3 characters'
+    const errs = {
+      customerName: validateName(inquiryData.customerName, 'Your name'),
+      phone: validatePhone(inquiryData.phone, 'Phone number'),
+      email: validateEmail(inquiryData.email, 'Email address'),
     }
 
-    if (!inquiryData.phone.trim()) {
-      errs.phone = 'Phone number is required'
-    } else if (!isValidPhone(inquiryData.phone)) {
-      errs.phone = 'Please enter a valid 10-digit phone number'
-    }
-
-    if (!inquiryData.email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(inquiryData.email)) {
-      errs.email = 'Please enter a valid email address'
-    }
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setInquiryErrors(errs)
     return Object.keys(errs).length === 0
@@ -502,9 +509,13 @@ export function PropertyDetail() {
                       placeholder="e.g. Priya Sharma"
                       value={inquiryData.customerName}
                       onChange={(e) => {
-                        setInquiryData({ ...inquiryData, customerName: e.target.value })
-                        if (inquiryErrors.customerName) setInquiryErrors({ ...inquiryErrors, customerName: null })
+                        const val = e.target.value
+                        setInquiryData((prev) => ({ ...prev, customerName: val }))
+                        if (inquiryErrors.customerName) {
+                          setInquiryErrors((prev) => ({ ...prev, customerName: validateField('customerName', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlurInquiry('customerName')}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
                         inquiryErrors.customerName
                           ? 'border-red-500 ring-1 ring-red-500/20'
@@ -527,9 +538,13 @@ export function PropertyDetail() {
                       placeholder="+91 98765 43210"
                       value={inquiryData.phone}
                       onChange={(e) => {
-                        setInquiryData({ ...inquiryData, phone: e.target.value })
-                        if (inquiryErrors.phone) setInquiryErrors({ ...inquiryErrors, phone: null })
+                        const val = e.target.value
+                        setInquiryData((prev) => ({ ...prev, phone: val }))
+                        if (inquiryErrors.phone) {
+                          setInquiryErrors((prev) => ({ ...prev, phone: validateField('phone', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlurInquiry('phone')}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
                         inquiryErrors.phone
                           ? 'border-red-500 ring-1 ring-red-500/20'
@@ -552,9 +567,13 @@ export function PropertyDetail() {
                       placeholder="priya@example.com"
                       value={inquiryData.email}
                       onChange={(e) => {
-                        setInquiryData({ ...inquiryData, email: e.target.value })
-                        if (inquiryErrors.email) setInquiryErrors({ ...inquiryErrors, email: null })
+                        const val = e.target.value
+                        setInquiryData((prev) => ({ ...prev, email: val }))
+                        if (inquiryErrors.email) {
+                          setInquiryErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlurInquiry('email')}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none transition-colors bg-white ${
                         inquiryErrors.email
                           ? 'border-red-500 ring-1 ring-red-500/20'

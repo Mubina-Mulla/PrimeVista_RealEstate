@@ -4,7 +4,7 @@ import { api } from '../../api/client.js'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { FALLBACK_AGENTS } from '../../data/fallbackData.js'
-import { isValidEmail, isValidPhone } from '../../utils/validators.js'
+import { validateName, validatePhone, validateEmail } from '../../utils/validators.js'
 
 export function AgentsAdmin() {
   const { showToast } = useToast()
@@ -76,29 +76,34 @@ export function AgentsAdmin() {
     setModalOpen(true)
   }
 
+  const validateField = (field, value) => {
+    if (field === 'name') return validateName(value, 'Full name')
+    if (field === 'role') {
+      if (!value?.trim()) return 'Role / Designation is required'
+      if (value.trim().length < 2) return 'Role must be at least 2 characters'
+      return null
+    }
+    if (field === 'phone') return validatePhone(value, 'Phone number')
+    if (field === 'email') return validateEmail(value, 'Email address')
+    return null
+  }
+
+  const handleBlur = (field) => {
+    const errorMsg = validateField(field, formData[field])
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validate = () => {
-    const errs = {}
-    if (!formData.name.trim()) {
-      errs.name = 'Full name is required'
-    } else if (formData.name.trim().length < 3) {
-      errs.name = 'Name must be at least 3 characters'
+    const errs = {
+      name: validateName(formData.name, 'Full name'),
+      role: !formData.role?.trim() ? 'Role / Designation is required' : null,
+      phone: validatePhone(formData.phone, 'Phone number'),
+      email: validateEmail(formData.email, 'Email address'),
     }
 
-    if (!formData.role.trim()) {
-      errs.role = 'Role / Designation is required'
-    }
-
-    if (!formData.phone.trim()) {
-      errs.phone = 'Phone number is required'
-    } else if (!isValidPhone(formData.phone)) {
-      errs.phone = 'Please enter a valid 10-digit phone number'
-    }
-
-    if (!formData.email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(formData.email)) {
-      errs.email = 'Please enter a valid email address'
-    }
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -273,9 +278,13 @@ export function AgentsAdmin() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => {
-                    setFormData({ ...formData, name: e.target.value })
-                    if (errors.name) setErrors({ ...errors, name: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, name: val }))
+                    if (errors.name) {
+                      setErrors((prev) => ({ ...prev, name: validateField('name', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('name')}
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.name ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
                   }`}
@@ -293,9 +302,13 @@ export function AgentsAdmin() {
                   type="text"
                   value={formData.role}
                   onChange={(e) => {
-                    setFormData({ ...formData, role: e.target.value })
-                    if (errors.role) setErrors({ ...errors, role: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, role: val }))
+                    if (errors.role) {
+                      setErrors((prev) => ({ ...prev, role: validateField('role', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('role')}
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.role ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
                   }`}
@@ -314,9 +327,13 @@ export function AgentsAdmin() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => {
-                      setFormData({ ...formData, phone: e.target.value })
-                      if (errors.phone) setErrors({ ...errors, phone: null })
+                      const val = e.target.value
+                      setFormData((prev) => ({ ...prev, phone: val }))
+                      if (errors.phone) {
+                        setErrors((prev) => ({ ...prev, phone: validateField('phone', val) }))
+                      }
                     }}
+                    onBlur={() => handleBlur('phone')}
                     className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                       errors.phone ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
                     }`}
@@ -344,9 +361,13 @@ export function AgentsAdmin() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value })
-                    if (errors.email) setErrors({ ...errors, email: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, email: val }))
+                    if (errors.email) {
+                      setErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('email')}
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
                   }`}

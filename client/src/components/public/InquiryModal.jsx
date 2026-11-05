@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { X, Calendar, Clock, Send, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
-import { isValidEmail, isValidPhone } from '../../utils/validators.js'
+import {
+  validateName,
+  validatePhone,
+  validateEmail,
+  validateFutureOrTodayDate,
+} from '../../utils/validators.js'
 
 export function InquiryModal({ isOpen, onClose, property }) {
   const { showToast } = useToast()
@@ -21,29 +26,36 @@ export function InquiryModal({ isOpen, onClose, property }) {
 
   if (!isOpen) return null
 
+  const validateField = (field, value) => {
+    if (field === 'customerName') return validateName(value, 'Full name')
+    if (field === 'phone') return validatePhone(value, 'Phone number')
+    if (field === 'email') return validateEmail(value, 'Email address')
+    if (field === 'preferredDate' && formData.inquiryType === 'site_visit') {
+      return validateFutureOrTodayDate(value, 'Preferred visit date')
+    }
+    return null
+  }
+
+  const handleBlur = (field) => {
+    const errorMsg = validateField(field, formData[field])
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validate = () => {
-    const errs = {}
-    if (!formData.customerName.trim()) {
-      errs.customerName = 'Full name is required'
-    } else if (formData.customerName.trim().length < 3) {
-      errs.customerName = 'Full name must be at least 3 characters'
+    const errs = {
+      customerName: validateName(formData.customerName, 'Full name'),
+      phone: validatePhone(formData.phone, 'Phone number'),
+      email: validateEmail(formData.email, 'Email address'),
     }
 
-    if (!formData.phone.trim()) {
-      errs.phone = 'Phone number is required'
-    } else if (!isValidPhone(formData.phone)) {
-      errs.phone = 'Please enter a valid 10-digit phone number'
+    if (formData.inquiryType === 'site_visit') {
+      const dateErr = validateFutureOrTodayDate(formData.preferredDate, 'Preferred visit date')
+      if (dateErr) errs.preferredDate = dateErr
     }
 
-    if (!formData.email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(formData.email)) {
-      errs.email = 'Please enter a valid email address'
-    }
-
-    if (formData.inquiryType === 'site_visit' && !formData.preferredDate) {
-      errs.preferredDate = 'Please select a preferred visit date'
-    }
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -162,9 +174,13 @@ export function InquiryModal({ isOpen, onClose, property }) {
                   type="text"
                   value={formData.customerName}
                   onChange={(e) => {
-                    setFormData({ ...formData, customerName: e.target.value })
-                    if (errors.customerName) setErrors({ ...errors, customerName: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, customerName: val }))
+                    if (errors.customerName) {
+                      setErrors((prev) => ({ ...prev, customerName: validateField('customerName', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('customerName')}
                   placeholder="e.g. Ramesh Patel"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
                     errors.customerName
@@ -189,9 +205,13 @@ export function InquiryModal({ isOpen, onClose, property }) {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => {
-                      setFormData({ ...formData, phone: e.target.value })
-                      if (errors.phone) setErrors({ ...errors, phone: null })
+                      const val = e.target.value
+                      setFormData((prev) => ({ ...prev, phone: val }))
+                      if (errors.phone) {
+                        setErrors((prev) => ({ ...prev, phone: validateField('phone', val) }))
+                      }
                     }}
+                    onBlur={() => handleBlur('phone')}
                     placeholder="+91 98765 43210"
                     className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
                       errors.phone
@@ -213,9 +233,13 @@ export function InquiryModal({ isOpen, onClose, property }) {
                     type="email"
                     value={formData.email}
                     onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value })
-                      if (errors.email) setErrors({ ...errors, email: null })
+                      const val = e.target.value
+                      setFormData((prev) => ({ ...prev, email: val }))
+                      if (errors.email) {
+                        setErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                      }
                     }}
+                    onBlur={() => handleBlur('email')}
                     placeholder="name@example.com"
                     className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
                       errors.email
@@ -243,9 +267,13 @@ export function InquiryModal({ isOpen, onClose, property }) {
                       min={new Date().toISOString().split('T')[0]}
                       value={formData.preferredDate}
                       onChange={(e) => {
-                        setFormData({ ...formData, preferredDate: e.target.value })
-                        if (errors.preferredDate) setErrors({ ...errors, preferredDate: null })
+                        const val = e.target.value
+                        setFormData((prev) => ({ ...prev, preferredDate: val }))
+                        if (errors.preferredDate) {
+                          setErrors((prev) => ({ ...prev, preferredDate: validateField('preferredDate', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlur('preferredDate')}
                       className={`w-full px-3 py-2 rounded-lg border bg-white text-xs focus:outline-none ${
                         errors.preferredDate ? 'border-red-500 ring-1 ring-red-500/20' : 'border-emerald-200'
                       }`}

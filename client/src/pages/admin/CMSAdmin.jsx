@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { FileText, Save, CheckCircle2, Globe, Sparkles, Building2 } from 'lucide-react'
+import { FileText, Save, CheckCircle2, Globe, Sparkles, Building2, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
+import { validateEmail, validatePhone } from '../../utils/validators.js'
 
 export function CMSAdmin() {
   const { showToast } = useToast()
   const [activeTab, setActiveTab] = useState('home')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [errors, setErrors] = useState({})
 
   const [homeSections, setHomeSections] = useState({
     heroBadge: 'Find a place to call home',
@@ -63,8 +65,27 @@ export function CMSAdmin() {
     loadPage()
   }, [activeTab])
 
+  const validate = () => {
+    const errs = {}
+    if (activeTab === 'contact') {
+      const emailErr = validateEmail(contactSections.email, 'Inquiry email')
+      if (emailErr) errs.email = emailErr
+      const phoneErr = validatePhone(contactSections.phone, 'Phone number')
+      if (phoneErr) errs.phone = phoneErr
+      if (!contactSections.address?.trim()) {
+        errs.address = 'Corporate address is required'
+      }
+    }
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const handleSave = async (e) => {
     e.preventDefault()
+    if (!validate()) {
+      showToast('Please fix highlighted errors before saving', 'error')
+      return
+    }
     setSaving(true)
 
     try {
@@ -210,23 +231,43 @@ export function CMSAdmin() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-bold text-gray-600 mb-1">Phone Number</label>
+                    <label className="block font-bold text-gray-600 mb-1">Phone Number *</label>
                     <input
                       type="text"
                       value={contactSections.phone}
-                      onChange={(e) => setContactSections({ ...contactSections, phone: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none"
+                      onChange={(e) => {
+                        setContactSections({ ...contactSections, phone: e.target.value })
+                        if (errors.phone) setErrors({ ...errors, phone: null })
+                      }}
+                      className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none ${
+                        errors.phone ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                      }`}
                     />
+                    {errors.phone && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block font-bold text-gray-600 mb-1">Inquiry Email</label>
+                    <label className="block font-bold text-gray-600 mb-1">Inquiry Email *</label>
                     <input
                       type="email"
                       value={contactSections.email}
-                      onChange={(e) => setContactSections({ ...contactSections, email: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none"
+                      onChange={(e) => {
+                        setContactSections({ ...contactSections, email: e.target.value })
+                        if (errors.email) setErrors({ ...errors, email: null })
+                      }}
+                      className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none ${
+                        errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
+                      }`}
                     />
+                    {errors.email && (
+                      <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1 font-medium">
+                        <AlertCircle size={11} /> {errors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 

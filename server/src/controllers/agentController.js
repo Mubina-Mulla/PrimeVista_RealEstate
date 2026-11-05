@@ -3,10 +3,19 @@ import { Property } from '../models/Property.js'
 import { z } from 'zod'
 
 export const agentSchema = z.object({
-  name: z.string().min(2, 'Agent name is required'),
+  name: z
+    .string()
+    .min(2, 'Agent name must be at least 2 characters')
+    .refine((val) => !/\d/.test(val), { message: 'Agent name cannot contain numbers' })
+    .refine((val) => /^[a-zA-Z\s.'’-]+$/.test(val.trim()), {
+      message: 'Agent name can only contain letters, spaces, and hyphens',
+    }),
   role: z.string().min(2, 'Role/Designation is required'),
   email: z.string().email('Valid email is required'),
-  phone: z.string().min(7, 'Phone number is required'),
+  phone: z
+    .string()
+    .min(10, 'Phone number must be at least 10 digits')
+    .refine((val) => !/[a-zA-Z]/.test(val), { message: 'Phone number cannot contain letters' }),
   photo: z.string().url('Photo must be a valid URL').optional(),
   description: z.string().optional(),
   experience: z.string().optional(),

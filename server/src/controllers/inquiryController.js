@@ -5,8 +5,19 @@ import { Agent } from '../models/Agent.js'
 
 // Zod validation schema for public inquiry
 export const inquirySubmissionSchema = z.object({
-  customerName: z.string().min(2, 'Name must be at least 2 characters'),
-  phone: z.string().min(7, 'Please provide a valid phone number'),
+  customerName: z
+    .string()
+    .min(2, 'Full name must be at least 2 characters')
+    .max(60, 'Full name cannot exceed 60 characters')
+    .refine((val) => !/\d/.test(val), { message: 'Full name cannot contain numbers' })
+    .refine((val) => /^[a-zA-Z\s.'’-]+$/.test(val.trim()), {
+      message: 'Full name can only contain letters, spaces, and hyphens',
+    }),
+  phone: z
+    .string()
+    .min(10, 'Please provide a valid 10-digit phone number')
+    .max(16, 'Phone number cannot exceed 15 digits')
+    .refine((val) => !/[a-zA-Z]/.test(val), { message: 'Phone number cannot contain letters' }),
   email: z.string().email('Please enter a valid email address'),
   message: z.string().min(5, 'Message must be at least 5 characters'),
   propertyId: z.string().optional().nullable(),

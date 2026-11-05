@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { useToast } from '../../context/ToastContext.jsx'
-import { isValidEmail, isValidPhone } from '../../utils/validators.js'
+import {
+  validateName,
+  validatePhone,
+  validateEmail,
+  validateMessage,
+} from '../../utils/validators.js'
 
 export function Contact() {
   const { showToast } = useToast()
@@ -16,31 +21,31 @@ export function Contact() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
+  const validateField = (field, value) => {
+    if (field === 'customerName') return validateName(value, 'Full name')
+    if (field === 'phone') return validatePhone(value, 'Phone number')
+    if (field === 'email') return validateEmail(value, 'Email address')
+    if (field === 'message') return validateMessage(value, 10, 'Inquiry message')
+    return null
+  }
+
+  const handleBlur = (field) => {
+    const errorMsg = validateField(field, formData[field])
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validate = () => {
-    const errs = {}
-    if (!formData.customerName.trim()) {
-      errs.customerName = 'Full name is required'
-    } else if (formData.customerName.trim().length < 3) {
-      errs.customerName = 'Full name must be at least 3 characters'
+    const errs = {
+      customerName: validateName(formData.customerName, 'Full name'),
+      phone: validatePhone(formData.phone, 'Phone number'),
+      email: validateEmail(formData.email, 'Email address'),
+      message: validateMessage(formData.message, 10, 'Inquiry message'),
     }
 
-    if (!formData.phone.trim()) {
-      errs.phone = 'Phone number is required'
-    } else if (!isValidPhone(formData.phone)) {
-      errs.phone = 'Please enter a valid 10-digit phone number'
-    }
-
-    if (!formData.email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(formData.email)) {
-      errs.email = 'Please enter a valid email address'
-    }
-
-    if (!formData.message.trim()) {
-      errs.message = 'Inquiry message is required'
-    } else if (formData.message.trim().length < 10) {
-      errs.message = 'Message must be at least 10 characters'
-    }
+    // Clean nulls
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -205,9 +210,13 @@ export function Contact() {
                     placeholder="e.g. Vikram Malhotra"
                     value={formData.customerName}
                     onChange={(e) => {
-                      setFormData({ ...formData, customerName: e.target.value })
-                      if (errors.customerName) setErrors({ ...errors, customerName: null })
+                      const val = e.target.value
+                      setFormData((prev) => ({ ...prev, customerName: val }))
+                      if (errors.customerName) {
+                        setErrors((prev) => ({ ...prev, customerName: validateField('customerName', val) }))
+                      }
                     }}
+                    onBlur={() => handleBlur('customerName')}
                     className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                       errors.customerName
                         ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
@@ -231,9 +240,13 @@ export function Contact() {
                       placeholder="+91 98765 43210"
                       value={formData.phone}
                       onChange={(e) => {
-                        setFormData({ ...formData, phone: e.target.value })
-                        if (errors.phone) setErrors({ ...errors, phone: null })
+                        const val = e.target.value
+                        setFormData((prev) => ({ ...prev, phone: val }))
+                        if (errors.phone) {
+                          setErrors((prev) => ({ ...prev, phone: validateField('phone', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlur('phone')}
                       className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                         errors.phone
                           ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
@@ -255,9 +268,13 @@ export function Contact() {
                       placeholder="vikram@example.com"
                       value={formData.email}
                       onChange={(e) => {
-                        setFormData({ ...formData, email: e.target.value })
-                        if (errors.email) setErrors({ ...errors, email: null })
+                        const val = e.target.value
+                        setFormData((prev) => ({ ...prev, email: val }))
+                        if (errors.email) {
+                          setErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                        }
                       }}
+                      onBlur={() => handleBlur('email')}
                       className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                         errors.email
                           ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
@@ -281,9 +298,13 @@ export function Contact() {
                     placeholder="Provide details about your preferred location, budget, property type, or specific question..."
                     value={formData.message}
                     onChange={(e) => {
-                      setFormData({ ...formData, message: e.target.value })
-                      if (errors.message) setErrors({ ...errors, message: null })
+                      const val = e.target.value
+                      setFormData((prev) => ({ ...prev, message: val }))
+                      if (errors.message) {
+                        setErrors((prev) => ({ ...prev, message: validateField('message', val) }))
+                      }
                     }}
+                    onBlur={() => handleBlur('message')}
                     className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors bg-white ${
                       errors.message
                         ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'

@@ -5,7 +5,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout.jsx'
 import { useToast } from '../../context/ToastContext.jsx'
 import { formatDate } from '../../utils/formatters.js'
 import { FALLBACK_STAFF_USERS } from '../../data/fallbackData.js'
-import { isValidEmail } from '../../utils/validators.js'
+import { validateName, validateEmail } from '../../utils/validators.js'
 
 export function UsersAdmin() {
   const { showToast } = useToast()
@@ -41,25 +41,36 @@ export function UsersAdmin() {
     loadUsers()
   }, [])
 
+  const validateField = (field, value) => {
+    if (field === 'name') return validateName(value, 'Staff member name')
+    if (field === 'email') return validateEmail(value, 'Official email address')
+    if (field === 'password') {
+      if (!value) return 'Password is required'
+      if (value.length < 6) return 'Password must be at least 6 characters'
+      return null
+    }
+    return null
+  }
+
+  const handleBlur = (field) => {
+    const errorMsg = validateField(field, formData[field])
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }))
+  }
+
   const validate = () => {
-    const errs = {}
-    if (!formData.name.trim()) {
-      errs.name = 'Full name is required'
-    } else if (formData.name.trim().length < 3) {
-      errs.name = 'Name must be at least 3 characters'
+    const errs = {
+      name: validateName(formData.name, 'Staff member name'),
+      email: validateEmail(formData.email, 'Official email address'),
+      password: !formData.password
+        ? 'Password is required'
+        : formData.password.length < 6
+        ? 'Password must be at least 6 characters'
+        : null,
     }
 
-    if (!formData.email.trim()) {
-      errs.email = 'Email address is required'
-    } else if (!isValidEmail(formData.email)) {
-      errs.email = 'Please enter a valid email address'
-    }
-
-    if (!formData.password) {
-      errs.password = 'Password is required'
-    } else if (formData.password.length < 6) {
-      errs.password = 'Password must be at least 6 characters'
-    }
+    Object.keys(errs).forEach((key) => {
+      if (!errs[key]) delete errs[key]
+    })
 
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -311,9 +322,13 @@ export function UsersAdmin() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => {
-                    setFormData({ ...formData, name: e.target.value })
-                    if (errors.name) setErrors({ ...errors, name: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, name: val }))
+                    if (errors.name) {
+                      setErrors((prev) => ({ ...prev, name: validateField('name', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('name')}
                   placeholder="e.g. Priya Sharma"
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.name ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
@@ -332,9 +347,13 @@ export function UsersAdmin() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value })
-                    if (errors.email) setErrors({ ...errors, email: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, email: val }))
+                    if (errors.email) {
+                      setErrors((prev) => ({ ...prev, email: validateField('email', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('email')}
                   placeholder="staff@primevista.com"
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
@@ -353,9 +372,13 @@ export function UsersAdmin() {
                   type="password"
                   value={formData.password}
                   onChange={(e) => {
-                    setFormData({ ...formData, password: e.target.value })
-                    if (errors.password) setErrors({ ...errors, password: null })
+                    const val = e.target.value
+                    setFormData((prev) => ({ ...prev, password: val }))
+                    if (errors.password) {
+                      setErrors((prev) => ({ ...prev, password: validateField('password', val) }))
+                    }
                   }}
+                  onBlur={() => handleBlur('password')}
                   placeholder="Minimum 6 characters"
                   className={`w-full px-3 py-2 rounded-xl border text-xs focus:outline-none transition-colors ${
                     errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'border-gray-200'
