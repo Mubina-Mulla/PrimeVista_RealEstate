@@ -7,6 +7,7 @@ import { ToastProvider } from './context/ToastContext.jsx'
 import { Navbar } from './components/common/Navbar.jsx'
 import { Footer } from './components/common/Footer.jsx'
 import { WhatsAppButton } from './components/public/WhatsAppButton.jsx'
+import { AIChatBot } from './components/public/AIChatBot.jsx'
 
 // Public Pages
 import { Home } from './pages/public/Home.jsx'
@@ -40,6 +41,8 @@ function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      {/* Floating AI Robo Assistant & WhatsApp Quick Connect */}
+      <AIChatBot />
       <WhatsAppButton />
     </div>
   )
