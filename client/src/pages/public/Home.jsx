@@ -18,7 +18,6 @@ import { api } from '../../api/client.js'
 import { SearchHero } from '../../components/public/SearchHero.jsx'
 import { PropertyCard } from '../../components/public/PropertyCard.jsx'
 import { InquiryModal } from '../../components/public/InquiryModal.jsx'
-import { WhatsAppButton } from '../../components/public/WhatsAppButton.jsx'
 import { FALLBACK_PROPERTIES } from '../../data/fallbackData.js'
 
 export function Home() {
@@ -477,9 +476,6 @@ export function Home() {
         onClose={() => setInquiryModalOpen(false)}
         property={null}
       />
-
-      {/* Floating WhatsApp Quick Connect Button */}
-      <WhatsAppButton />
     </div>
   )
 }

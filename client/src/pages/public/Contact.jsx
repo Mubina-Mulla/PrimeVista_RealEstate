@@ -121,13 +121,23 @@ export function Contact() {
                     <Phone size={20} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider">Direct Phone</h4>
+                    <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider">Direct Phone & WhatsApp</h4>
                     <p className="mt-1">
-                      <a href="tel:+918045678900" className="text-[#0F4C3A] font-semibold hover:underline">
-                        +91 (080) 4567 8900
+                      <a href="tel:+919175514916" className="text-[#0F4C3A] font-semibold hover:underline">
+                        +91 91755 14916
                       </a>
                     </p>
-                    <p className="text-xs text-gray-400">+91 98765 43210 (Mobile & WhatsApp)</p>
+                    <p className="text-xs text-emerald-700 font-medium mt-1">
+                      <a
+                        href="https://wa.me/919175514916?text=Hello%20PrimeVista%20Real%20Estate,%20I%20would%20like%20to%20inquire%20about%20your%20properties."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline flex items-center gap-1.5"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-[#25D366] inline-block animate-pulse"></span>
+                        Chat on WhatsApp: +91 91755 14916
+                      </a>
+                    </p>
                   </div>
                 </div>
 

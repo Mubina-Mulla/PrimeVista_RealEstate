@@ -12,14 +12,14 @@ export function WhatsAppButton() {
     >
       {/* Tooltip on hover */}
       <span className="hidden sm:inline-block px-3 py-1.5 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-        Chat with Property Advisor
+        Chat on WhatsApp (+91 91755 14916)
       </span>
 
       {/* Button with WhatsApp SVG */}
       <motion.a
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        href="https://wa.me/919876543210?text=Hello%20PrimeVista%20Real%20Estate,%20I%20am%20interested%20in%20learning%20more%20about%20your%20properties."
+        href="https://wa.me/919175514916?text=Hello%20PrimeVista%20Real%20Estate,%20I%20am%20interested%20in%20learning%20more%20about%20your%20properties."
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with PrimeVista on WhatsApp"

@@ -6,6 +6,7 @@ import { ToastProvider } from './context/ToastContext.jsx'
 // Common Public Layout Components
 import { Navbar } from './components/common/Navbar.jsx'
 import { Footer } from './components/common/Footer.jsx'
+import { WhatsAppButton } from './components/public/WhatsAppButton.jsx'
 
 // Public Pages
 import { Home } from './pages/public/Home.jsx'
@@ -39,6 +40,7 @@ function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      <WhatsAppButton />
     </div>
   )
 }

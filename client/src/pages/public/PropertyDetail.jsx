@@ -16,8 +16,8 @@ import {
   Share2,
   Clock,
   Send,
-  Building2,
   AlertCircle,
+  MessageCircle,
 } from 'lucide-react'
 import { api } from '../../api/client.js'
 import { formatPrice } from '../../utils/formatters.js'
@@ -463,6 +463,15 @@ export function PropertyDetail() {
                   >
                     <Phone size={15} className="text-[#0F4C3A]" />
                     <span>{property.assignedAgent.phone}</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/919175514916?text=${encodeURIComponent(`Hello PrimeVista, I am inquiring about: ${property.title} (Price: ${formatPrice(property.price)})`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0F4C3A] hover:text-emerald-900 transition-colors font-semibold"
+                  >
+                    <MessageCircle size={15} className="text-[#25D366]" />
+                    <span>WhatsApp: 9175514916</span>
                   </a>
                   <a
                     href={`mailto:${property.assignedAgent.email}`}
