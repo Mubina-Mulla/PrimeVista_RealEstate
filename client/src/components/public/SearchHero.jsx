@@ -1,6 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, MapPin, Building2, IndianRupee, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
+import {
+  Search,
+  MapPin,
+  Building2,
+  IndianRupee,
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  BadgePercent,
+  CheckCircle2,
+} from 'lucide-react'
 
 export function SearchHero({ heroData }) {
   const navigate = useNavigate()
@@ -47,17 +58,36 @@ export function SearchHero({ heroData }) {
     heroData?.heroImage ||
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=85'
 
+  const titleWords = titleText.split(' ')
+  const highlightWords = highlightText.split(' ')
+
   return (
     <div className="relative">
       {/* Dark Green Brand Hero Section */}
       <section className="relative overflow-hidden bg-[#0F4C3A] text-white pt-6 pb-12 sm:pt-8 sm:pb-16 md:pt-10 md:pb-20">
-        {/* Subtle decorative background circles */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-[#F4B740]/10 blur-3xl pointer-events-none" />
+        {/* Animated subtle ambient glow circles */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.8, ease: 'easeOut' }}
+          className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.8, delay: 0.2, ease: 'easeOut' }}
+          className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-[#F4B740]/10 blur-3xl pointer-events-none"
+        />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 sm:space-y-10 lg:space-y-12">
-          {/* Interactive Search Filter Box: Directly after Navbar on Banner */}
-          <div id="search-bar" className="relative z-20">
+          {/* 1. Interactive Search Filter Box: Staggers in right after Navbar on Banner */}
+          <motion.div
+            id="search-bar"
+            initial={{ opacity: 0, y: -25, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-20"
+          >
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 shadow-2xl border border-white/20 text-[#1F2937]">
               <form onSubmit={handleSearch} className="space-y-4 sm:space-y-5">
                 {/* Purpose Tabs: Buy vs Rent */}
@@ -95,7 +125,7 @@ export function SearchHero({ heroData }) {
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="Indiranagar, Worli, BKC..."
-                        className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white text-gray-800 placeholder-gray-400"
+                        className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#0F4C3A] focus:ring-2 focus:ring-[#0F4C3A]/10 bg-white text-gray-800 placeholder-gray-400 transition-colors"
                       />
                     </div>
                   </div>
@@ -146,88 +176,199 @@ export function SearchHero({ heroData }) {
 
                   {/* Search Submit Button */}
                   <div>
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="w-full py-3.5 px-6 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#0F4C3A]/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#0F4C3A] hover:bg-[#0A3629] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#0F4C3A]/20 transition-all cursor-pointer"
                     >
                       <Search size={18} className="text-[#F4B740]" />
                       <span>Search Properties</span>
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </form>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Main Hero Content Grid */}
+          {/* 2. Main Hero Content Grid with Staggered Reveals */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Pill badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm font-medium backdrop-blur-sm">
+              {/* Pill badge: Staggers in at 0.3s */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm font-medium backdrop-blur-sm"
+              >
                 <span className="w-2 h-2 rounded-full bg-[#F4B740] animate-pulse" />
                 <span>{badgeText}</span>
-              </div>
+              </motion.div>
 
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15]">
-                {titleText}{' '}
-                <span className="block text-[#F4B740] mt-1 drop-shadow-xs">
-                  {highlightText}
+              {/* Main Headline: 3D Staggered Word Flip at 0.45s */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-['Poppins'] tracking-tight leading-[1.15] [perspective:600px]">
+                <span className="inline-block">
+                  {titleWords.map((word, idx) => (
+                    <motion.span
+                      key={idx}
+                      className="inline-block mr-2.5 sm:mr-3.5 last:mr-0"
+                      initial={{ opacity: 0, y: 40, rotateX: 70 }}
+                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                      transition={{
+                        duration: 0.7,
+                        delay: 0.4 + idx * 0.08,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </span>{' '}
+                <span className="block text-[#F4B740] mt-1 drop-shadow-sm">
+                  {highlightWords.map((word, idx) => (
+                    <motion.span
+                      key={idx}
+                      className="inline-block mr-2.5 sm:mr-3.5 last:mr-0"
+                      initial={{ opacity: 0, y: 40, rotateX: 70 }}
+                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                      transition={{
+                        duration: 0.7,
+                        delay: 0.6 + idx * 0.08,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
                 </span>
               </h1>
 
-              {/* Description */}
-              <p className="max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 leading-relaxed font-normal">
+              {/* Description: Staggers in at 0.8s */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 leading-relaxed font-normal"
+              >
                 {descriptionText}
-              </p>
+              </motion.p>
 
-              {/* Quick Action buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                <button
+              {/* Quick Action buttons: Staggers in at 0.95s */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.95, ease: [0.22, 1, 0.36, 1] }}
+                className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => navigate('/properties')}
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all transform hover:-translate-y-0.5 text-center cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#F4B740] text-[#0F4C3A] font-bold text-sm sm:text-base shadow-lg shadow-[#F4B740]/20 hover:bg-[#e2a630] transition-all text-center cursor-pointer"
                 >
                   <span>Explore Properties</span>
                   <ArrowRight size={18} />
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => navigate('/contact')}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm sm:text-base backdrop-blur-sm transition-all text-center cursor-pointer"
                 >
                   Contact Our Team
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
 
-              {/* Trust Metrics pill */}
-              <div className="pt-4 flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-emerald-200/80">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-[#F4B740] shrink-0" />
-                  <span>Verified Legal Clearances</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sparkles size={18} className="text-[#F4B740] shrink-0" />
-                  <span>Curated Luxury Architecture</span>
-                </div>
+              {/* 3. Two Trust Cards (Verified Property & No Hidden Charges): Staggers in at 1.1s & 1.25s */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                {/* Trust Card 1 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-white/25 transition-all duration-300 shadow-lg group/trust"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#F4B740]/20 border border-[#F4B740]/40 flex items-center justify-center text-[#F4B740] shrink-0 mt-0.5 group-hover/trust:bg-[#F4B740]/30 transition-colors">
+                    <ShieldCheck size={22} />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-white text-sm tracking-wide">
+                      Verified Property
+                    </h4>
+                    <ul className="mt-1.5 space-y-1 text-xs text-emerald-100/85">
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4B740] shrink-0" />
+                        Personally Inspected by Our Team
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4B740] shrink-0" />
+                        Owner Identity & Title Verified
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
+
+                {/* Trust Card 2 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.25, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-white/25 transition-all duration-300 shadow-lg group/trust"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#F4B740]/20 border border-[#F4B740]/40 flex items-center justify-center text-[#F4B740] shrink-0 mt-0.5 group-hover/trust:bg-[#F4B740]/30 transition-colors">
+                    <BadgePercent size={22} />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-white text-sm tracking-wide">
+                      No Hidden Charges
+                    </h4>
+                    <ul className="mt-1.5 space-y-1 text-xs text-emerald-100/85">
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4B740] shrink-0" />
+                        Transparent Pricing Guaranteed
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4B740] shrink-0" />
+                        Commission Clearly Mentioned
+                      </li>
+                    </ul>
+                  </div>
+                </motion.div>
               </div>
             </div>
 
-            {/* Right Hero Image Card */}
-            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
+            {/* Right Hero Image Card: Scales in with floating badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:col-span-5 relative mt-6 lg:mt-0"
+            >
               <div className="relative mx-auto max-w-md lg:max-w-none">
-                <div className="overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl bg-emerald-950/40">
-                  <img
+                <div className="overflow-hidden rounded-3xl border-4 border-white/15 shadow-2xl bg-emerald-950/40">
+                  <motion.img
+                    initial={{ scale: 1.08 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.6, ease: 'easeOut' }}
                     src={heroImage}
                     alt="Luxury architectural residence by PrimeVista"
-                    className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover transition-transform duration-700 hover:scale-105"
+                    className="w-full h-[280px] sm:h-[360px] lg:h-[420px] object-cover transition-transform duration-700 hover:scale-105"
                   />
                 </div>
 
-                {/* Floating card indicator */}
-                <div className="absolute -bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3 animate-in fade-in duration-500">
+                {/* Floating card indicator: Staggers in at 1.35s */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute -bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-xs p-3.5 sm:p-4 rounded-2xl bg-white text-[#1F2937] shadow-xl border border-gray-100 flex items-center gap-3"
+                >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-[#0F4C3A] shrink-0">
                     <Building2 size={22} />
                   </div>
@@ -239,9 +380,9 @@ export function SearchHero({ heroData }) {
                       Better Spaces for Your Future
                     </p>
                   </div>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
