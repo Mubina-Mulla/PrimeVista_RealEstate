@@ -12,7 +12,7 @@ export function WhatsAppButton() {
     >
       {/* Tooltip on hover */}
       <span className="hidden sm:inline-block px-3 py-1.5 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-        Chat on WhatsApp (+91 91755 14916)
+        Chat on WhatsApp
       </span>
 
       {/* Button with WhatsApp SVG */}
