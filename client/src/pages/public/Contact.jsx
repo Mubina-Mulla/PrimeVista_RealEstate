@@ -247,7 +247,7 @@ export function Contact() {
                     </label>
                     <input
                       type="tel"
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 91755 14916"
                       value={formData.phone}
                       onChange={(e) => {
                         const val = e.target.value

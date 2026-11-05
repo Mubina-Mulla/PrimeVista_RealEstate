@@ -9,7 +9,7 @@ const DEFAULT_AGENTS = [
     photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
     role: 'Senior Luxury Property Specialist',
     email: 'agent@primevista.com',
-    phone: '+91 98765 43210',
+    phone: '+91 91755 14916',
     description: 'Specializes in high-net-worth residential acquisitions, penthouses, and heritage estates with 10+ years experience.',
     experience: '10+ Years',
     propertiesListed: 4,
@@ -126,11 +126,20 @@ export function Agents() {
 
                 <div className="p-6 pt-0 space-y-2">
                   <a
-                    href={`tel:${agent.phone}`}
+                    href="https://wa.me/919175514916?text=Hello%20PrimeVista,%20I%20would%20like%20to%20connect%20with%20an%20agent."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0F4C3A] text-xs font-bold transition-colors"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#25D366] inline-block animate-pulse"></span>
+                    <span>WhatsApp: 9175514916</span>
+                  </a>
+                  <a
+                    href={`tel:${agent.phone || '+91 91755 14916'}`}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#F5F7F5] hover:bg-emerald-50 text-gray-700 hover:text-[#0F4C3A] text-xs font-semibold transition-colors"
                   >
                     <Phone size={14} className="text-[#0F4C3A]" />
-                    <span>{agent.phone}</span>
+                    <span>{agent.phone || '+91 91755 14916'}</span>
                   </a>
                   <a
                     href={`mailto:${agent.email}`}

@@ -67,7 +67,7 @@ async function seed() {
         photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80',
         role: 'Senior Luxury Property Specialist',
         email: 'agent@primevista.com',
-        phone: '+91 98765 43210',
+        phone: '+91 91755 14916',
         description: 'Specializes in high-net-worth residential acquisitions, penthouses, and heritage estates with 10+ years experience.',
         experience: '10+ Years',
         userAccount: agentUser._id,

@@ -154,7 +154,7 @@ test('PrimeVista API & Security Test Suite', async (t) => {
       body: JSON.stringify({
         customerName: 'Ananya Deshmukh',
         email: 'ananya.test@example.com',
-        phone: '+91 98765 43210',
+        phone: '+91 91755 14916',
         message: 'Interested in booking a weekend site visit for the 3BHK villa.',
         preferredDate: '2026-11-15',
         preferredTime: '11:00 AM',

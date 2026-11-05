@@ -212,7 +212,7 @@ export function InquiryModal({ isOpen, onClose, property }) {
                       }
                     }}
                     onBlur={() => handleBlur('phone')}
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 91755 14916"
                     className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${
                       errors.phone
                         ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20'
